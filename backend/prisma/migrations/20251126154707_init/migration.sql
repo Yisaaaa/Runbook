@@ -8,18 +8,18 @@ CREATE TYPE "SessionStatus" AS ENUM ('ACTIVE', 'EXPIRED');
 CREATE TYPE "ExecutionStatus" AS ENUM ('SUCCESS', 'FAILURE');
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "passwordHash" TEXT NOT NULL,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Runbook" (
+CREATE TABLE "runbooks" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "runtime" TEXT NOT NULL,
@@ -30,11 +30,11 @@ CREATE TABLE "Runbook" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" INTEGER NOT NULL,
 
-    CONSTRAINT "Runbook_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "runbooks_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Session" (
+CREATE TABLE "sessions" (
     "id" SERIAL NOT NULL,
     "runbookId" INTEGER NOT NULL,
     "contanerId" TEXT NOT NULL,
@@ -43,11 +43,11 @@ CREATE TABLE "Session" (
     "status" "SessionStatus" NOT NULL DEFAULT 'ACTIVE',
     "lastActivityAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "sessions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "ExecutionLog" (
+CREATE TABLE "execution_logs" (
     "id" SERIAL NOT NULL,
     "sessionId" INTEGER NOT NULL,
     "code" TEXT NOT NULL,
@@ -55,23 +55,23 @@ CREATE TABLE "ExecutionLog" (
     "status" "ExecutionStatus" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "ExecutionLog_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "execution_logs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Runbook_shareToken_key" ON "Runbook"("shareToken");
+CREATE UNIQUE INDEX "runbooks_shareToken_key" ON "runbooks"("shareToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Session_contanerId_key" ON "Session"("contanerId");
+CREATE UNIQUE INDEX "sessions_contanerId_key" ON "sessions"("contanerId");
 
 -- AddForeignKey
-ALTER TABLE "Runbook" ADD CONSTRAINT "Runbook_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "runbooks" ADD CONSTRAINT "runbooks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Session" ADD CONSTRAINT "Session_runbookId_fkey" FOREIGN KEY ("runbookId") REFERENCES "Runbook"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_runbookId_fkey" FOREIGN KEY ("runbookId") REFERENCES "runbooks"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ExecutionLog" ADD CONSTRAINT "ExecutionLog_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "Session"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "execution_logs" ADD CONSTRAINT "execution_logs_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "sessions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
