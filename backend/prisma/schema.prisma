@@ -12,3 +12,66 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum RunbookPrivacy {
+  PRIVATE
+  PUBLIC
+  SHARED
+}
+
+enum SessionStatus {
+  ACTIVE
+  EXPIRED
+}
+
+enum ExecutionStatus {
+  SUCCESS
+  FAILURE
+}
+
+model User {
+  id Int @default(autoincrement()) @id
+  email String @unique
+  name String?
+  createdAt DateTime @default(now())
+  passwordHash String
+  runbooks Runbook[]
+}
+
+model Runbook {
+  id Int @default(autoincrement()) @id
+  title String
+  runtime String
+  content String
+  privacy RunbookPrivacy @default(PRIVATE)
+  shareToken String? @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  sessions Session[]
+}
+
+model Session {
+  id Int @default(autoincrement()) @id
+  runbookId Int
+  runbook Runbook @relation(fields: [runbookId], references: [id])
+  contanerId String @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  status SessionStatus @default(ACTIVE)
+  lastActivityAt DateTime @default(now())
+  executionLogs ExecutionLog[]
+}
+
+model ExecutionLog {
+  id Int @default(autoincrement()) @id
+  sessionId Int
+  session Session @relation(fields: [sessionId], references: [id])
+  code String
+  output String
+  status ExecutionStatus
+  createdAt DateTime @default(now())
+}
+
+
