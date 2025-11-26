@@ -11,7 +11,7 @@ CREATE TYPE "ExecutionStatus" AS ENUM ('SUCCESS', 'FAILURE');
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
-    "name" TEXT,
+    "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "passwordHash" TEXT NOT NULL,
 

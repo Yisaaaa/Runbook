@@ -6,7 +6,8 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -32,7 +33,7 @@ enum ExecutionStatus {
 model User {
   id Int @default(autoincrement()) @id
   email String @unique
-  name String?
+  name String
   createdAt DateTime @default(now())
   passwordHash String
   runbooks Runbook[]
