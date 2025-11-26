@@ -1,6 +1,3 @@
-export class UserResponseDto {
-  id: number;
-  name: string;
-  email: string;
-  createdAt: Date;
-}
+import { User } from 'src/generated/prisma/client';
+
+export type UserResponseDto = Omit<User, 'passwordHash'>;

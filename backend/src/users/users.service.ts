@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { UserResponseDto } from './dto/user-response.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -13,26 +15,26 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const passHash = await this.authService.hashPassword(
-      createUserDto.password,
-    );
-
-    const { passwordHash, ...userSafe } = await this.prismaService.user.create({
-      data: {
-        name: createUserDto.name,
-        email: createUserDto.email,
-        passwordHash: passHash,
-      },
-    });
-
-    return {
-      ...userSafe,
+    const data: Prisma.UserCreateInput = {
+      name: createUserDto.name,
+      email: createUserDto.email,
+      passwordHash: await this.authService.hashPassword(createUserDto.password),
     };
+
+    const user = await this.prismaService.user.create({ data });
+    const { passwordHash, ...userSafe } = user;
+    return userSafe;
   }
 
   async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.prismaService.user.findMany();
-    return users.map(({ passwordHash, ...userSafe }) => userSafe);
+    return this.prismaService.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
   }
 
   findOne(id: number) {
