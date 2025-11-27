@@ -2,22 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from 'src/generated/prisma/client';
+import { Prisma, User } from 'src/generated/prisma/client';
 import { UserResponseDto } from './dto/user-response.dto';
-import { AuthService } from 'src/auth/auth.service';
+import * as bycrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async hashPassword(password: string): Promise<string> {
+    return await bycrypt.hash(password, 10);
+  }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const data: Prisma.UserCreateInput = {
       name: createUserDto.name,
       email: createUserDto.email,
-      passwordHash: await this.authService.hashPassword(createUserDto.password),
+      passwordHash: await this.hashPassword(createUserDto.password),
     };
 
     const user = await this.prismaService.user.create({ data });
@@ -36,8 +37,20 @@ export class UsersService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prismaService.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+  }
+
+  async findById(id: number): Promise<User | null> {
+    return this.prismaService.user.findFirst({
+      where: {
+        id: id,
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
