@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { SignUpDto } from '../auth/dtos/sign-up.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, User } from 'src/generated/prisma/client';
@@ -14,7 +14,7 @@ export class UsersService {
     return await bycrypt.hash(password, 10);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  async create(createUserDto: SignUpDto): Promise<UserResponseDto> {
     const data: Prisma.UserCreateInput = {
       name: createUserDto.name,
       email: createUserDto.email,

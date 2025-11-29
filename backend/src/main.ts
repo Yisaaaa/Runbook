@@ -27,3 +27,6 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
+
+console.log('CWD:', process.cwd());
+console.log('ENV (JWT_SECRET):', process.env.JWT_SECRET);
