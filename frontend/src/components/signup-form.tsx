@@ -68,6 +68,10 @@ export default function SignupForm() {
             <FieldDescription>Please confirm your password</FieldDescription>
           </Field>
 
+          <Field>
+            <Button className="">Create account</Button>
+          </Field>
+
           <ContinueWith />
         </FieldGroup>
       </form>
