@@ -25,21 +25,24 @@ export class AuthService {
       signInDto.email,
     );
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+    const isPasswordMatch: boolean = user
+      ? await bycrypt.compare(signInDto.password, user.passwordHash)
+      : false;
+    if (!isPasswordMatch) {
     }
 
-    const isPasswordMatch: boolean = await bycrypt.compare(
-      signInDto.password,
-      user.passwordHash,
-    );
-    if (!isPasswordMatch) {
+    if (!user || !isPasswordMatch) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     };
   }
 
