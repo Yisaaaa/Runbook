@@ -19,7 +19,7 @@ export default function Home() {
               <Link href="/login">Sign In</Link>
             </Button>
             <Button variant="secondary" className="flex gap-2 items-center">
-              <Link href="/signup">Get started</Link>
+              <Link href="/dashboard">Get started</Link>
               <ArrowRight className="w-2 h-2" strokeWidth={3} />
             </Button>
           </div>
@@ -41,7 +41,7 @@ export default function Home() {
         <div className="flex gap-3">
           <Button className="font-medium">
             {/* Should be updated to correct route for creating runbook */}
-            <Link href="/login">Create Runbook</Link>
+            <Link href="/dashboard">Create Runbook</Link>
           </Button>
           <Button variant="ghost">
             <p>Learn more</p>

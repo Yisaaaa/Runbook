@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "@/globals.css";
 import { poppins } from "@/fonts";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 export const metadata: Metadata = {
   title: "Runbook",
@@ -19,7 +21,12 @@ export default function RootLayout({
         crossOrigin="anonymous"
         src="https://tweakcn.com/live-preview.min.js"
       />
-      <body className={`${poppins.className} antialiased`}>{children}</body>
+      <body className={`${poppins.className} antialiased`}>
+        <>
+          {children}
+          <Toaster closeButton richColors position="top-right" />
+        </>
+      </body>
     </html>
   );
 }
