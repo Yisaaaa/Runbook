@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     const { user, accessToken } = responseData;
     localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("access_accessToken", accessToken);
+    localStorage.setItem("accessToken", accessToken);
     set({ user, accessToken, isLoading: false });
   },
 
