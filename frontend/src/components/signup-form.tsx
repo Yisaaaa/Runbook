@@ -1,11 +1,5 @@
 import { GalleryVerticalEnd } from "lucide-react";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-} from "./ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import Link from "next/link";
@@ -24,6 +18,7 @@ export default function SignupForm() {
             <div className="text-muted-foreground">
               <span>Already have an account? </span>{" "}
               <Button
+                asChild
                 variant="link"
                 className="px-1 text-muted-foreground text-base underline-offset-4 underline font-normal hover:text-foreground"
               >

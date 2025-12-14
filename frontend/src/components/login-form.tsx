@@ -53,6 +53,7 @@ export default function LoginForm() {
             <div className="text-muted-foreground">
               <span>Don't have an account? </span>{" "}
               <Button
+                asChild
                 variant="link"
                 className="px-1 text-muted-foreground text-base underline-offset-4 underline font-normal hover:text-foreground"
               >
