@@ -22,7 +22,7 @@ export default function SignupForm() {
                 variant="link"
                 className="px-1 text-muted-foreground text-base underline-offset-4 underline font-normal hover:text-foreground"
               >
-                <Link href="/login">Sign in</Link>
+                <Link href="/auth/login">Sign in</Link>
               </Button>
             </div>
           </div>

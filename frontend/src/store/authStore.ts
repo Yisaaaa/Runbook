@@ -25,6 +25,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
 
   initAuth: () => {
+    set({ isLoading: true });
     const storedUser = localStorage.getItem("user");
     const storedAccessToken = localStorage.getItem("accessToken");
     if (storedUser && storedAccessToken) {

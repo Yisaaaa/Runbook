@@ -57,7 +57,7 @@ export default function LoginForm() {
                 variant="link"
                 className="px-1 text-muted-foreground text-base underline-offset-4 underline font-normal hover:text-foreground"
               >
-                <Link href={"/signup"}>Sign up</Link>
+                <Link href={"/auth/signup"}>Sign up</Link>
               </Button>
             </div>
           </div>

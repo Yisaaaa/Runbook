@@ -15,12 +15,18 @@ export default function Home() {
             Runbook
           </p>
           <div className="flex justify-between gap-4">
-            <Button className="font-medium" variant="ghost">
-              <Link href="/login">Sign In</Link>
+            <Button asChild className="font-medium" variant="ghost">
+              <Link href="/auth/login">Sign In</Link>
             </Button>
-            <Button variant="secondary" className="flex gap-2 items-center">
-              <Link href="/dashboard">Get started</Link>
-              <ArrowRight className="w-2 h-2" strokeWidth={3} />
+            <Button
+              asChild
+              variant="secondary"
+              className="flex gap-2 items-center"
+            >
+              <div>
+                <Link href="/dashboard">Get started</Link>
+                <ArrowRight className="w-2 h-2" strokeWidth={3} />
+              </div>
             </Button>
           </div>
         </div>
@@ -39,7 +45,7 @@ export default function Home() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button className="font-medium">
+          <Button asChild className="font-medium">
             {/* Should be updated to correct route for creating runbook */}
             <Link href="/dashboard">Create Runbook</Link>
           </Button>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "@/globals.css";
 import { poppins } from "@/fonts";
 import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
 
 export const metadata: Metadata = {
   title: "Runbook",
