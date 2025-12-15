@@ -10,7 +10,7 @@ import { UsersService } from 'src/users/users.service';
 import { SignInDto } from './dtos/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dtos/sign-up.dto';
-import { User } from '@prisma/client';
+import { User } from 'src/generated/prisma/client';
 import { UserResponseDto } from 'src/users/dto/user-response.dto';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync(payload),
       user: {
         id: user.id,
-        name: user.name,
+        username: user.username,
         email: user.email,
       },
     };
@@ -63,7 +63,7 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync(payload),
       user: {
         id: newUser.id,
-        name: newUser.name,
+        username: newUser.username,
         email: newUser.email,
       },
     };

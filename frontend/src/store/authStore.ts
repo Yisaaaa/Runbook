@@ -5,7 +5,7 @@ import { fetchWrapper } from "@/lib/api";
 
 interface User {
   id: string;
-  name: string;
+  username: string;
   email: string;
 }
 

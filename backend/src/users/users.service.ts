@@ -16,7 +16,7 @@ export class UsersService {
 
   async create(createUserDto: SignUpDto): Promise<UserResponseDto> {
     const data: Prisma.UserCreateInput = {
-      name: createUserDto.name,
+      username: createUserDto.name,
       email: createUserDto.email,
       passwordHash: await this.hashPassword(createUserDto.password),
     };
@@ -30,7 +30,7 @@ export class UsersService {
     return this.prismaService.user.findMany({
       select: {
         id: true,
-        name: true,
+        username: true,
         email: true,
         createdAt: true,
       },

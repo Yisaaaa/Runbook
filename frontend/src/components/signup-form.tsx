@@ -29,9 +29,9 @@ export default function SignupForm() {
 
           <Field>
             <FieldLabel htmlFor="email" className="text-base">
-              Name
+              Username
             </FieldLabel>
-            <Input id="name" type="text" placeholder="Bob Martin" />
+            <Input id="username" type="text" placeholder="Bob Martin" />
           </Field>
 
           <Field>
