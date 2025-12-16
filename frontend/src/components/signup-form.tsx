@@ -31,7 +31,14 @@ export default function SignupForm() {
             <FieldLabel htmlFor="email" className="text-base">
               Username
             </FieldLabel>
-            <Input id="username" type="text" placeholder="Bob Martin" />
+            <InputGroup>
+              <InputGroupInput
+                id="username"
+                type="text"
+                placeholder="bobmartin"
+              />
+              <InputGroupAddon>@</InputGroupAddon>
+            </InputGroup>
           </Field>
 
           <Field>
