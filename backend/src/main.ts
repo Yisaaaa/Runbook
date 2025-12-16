@@ -42,3 +42,4 @@ bootstrap();
 
 console.log('CWD:', process.cwd());
 console.log('ENV (JWT_SECRET):', process.env.JWT_SECRET);
+console.log(process.env.CORS_ORIGIN);
