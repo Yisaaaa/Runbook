@@ -1,14 +1,41 @@
+"use client";
+
 import { GalleryVerticalEnd } from "lucide-react";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "./ui/field";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import Link from "next/link";
 import ContinueWith from "./continue-with";
+import { useAuthStore } from "@/store/authStore";
+import { useState } from "react";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
+import { useForm } from "react-hook-form";
+import { signupSchema, signupSchemaType } from "@/types/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function SignupForm() {
+  const signup = useAuthStore((state) => state.signup);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<signupSchemaType>({
+    resolver: zodResolver(signupSchema),
+  });
+
+  const handleSignup = () => {};
+
   return (
-    <div className="">
-      <form>
+    <div>
+      <form onSubmit={handleSubmit(handleSignup)}>
         <FieldGroup>
           <div className="text-center flex flex-col gap-3 items-center">
             <Link href="/">
@@ -36,23 +63,38 @@ export default function SignupForm() {
                 id="username"
                 type="text"
                 placeholder="bobmartin"
+                {...register("username")}
               />
               <InputGroupAddon>@</InputGroupAddon>
             </InputGroup>
+            {errors.username && (
+              <FieldError>{errors.username.message}</FieldError>
+            )}
           </Field>
 
           <Field>
             <FieldLabel htmlFor="email" className="text-base">
               Email
             </FieldLabel>
-            <Input id="email" type="email" placeholder="bob@example.com" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="bob@example.com"
+              {...register("email")}
+            />
+            {errors.email && <FieldError>{errors.email.message}</FieldError>}
           </Field>
 
           <Field>
             <FieldLabel className="text-base flex-1" htmlFor="password">
               Password
             </FieldLabel>
-            <Input id="password" type="password" placeholder="••••••••" />
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              {...register("password")}
+            />
             <FieldDescription>
               Must be at least 8 characters long
             </FieldDescription>
@@ -66,12 +108,16 @@ export default function SignupForm() {
               id="confirmPassword"
               type="password"
               placeholder="••••••••"
+              {...register("confirmPassword")}
             />
             <FieldDescription>Please confirm your password</FieldDescription>
+            {!errors.password && errors.confirmPassword && (
+              <FieldError>{errors.confirmPassword.message}</FieldError>
+            )}
           </Field>
 
           <Field>
-            <Button className="">Create account</Button>
+            <Button type="submit">Create account</Button>
           </Field>
 
           <ContinueWith />
