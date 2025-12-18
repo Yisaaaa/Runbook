@@ -17,7 +17,7 @@ export const fetchWrapper = async (url: string, options: RequestInit = {}) => {
     if ([401, 403].includes(response.status)) {
       useAuthStore.getState().logout();
     }
-    let message = "`HTTP error! status: ${response.status}`";
+    let message = `HTTP error! status: ${response.status}`;
 
     try {
       const errorBody = await response.json();

@@ -53,7 +53,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signup: async (signupUserData: signupSchemaType) => {
-    const responseData = await fetchWrapper("/signup", {
+    const responseData = await fetchWrapper("/auth/signup", {
+      method: "POST",
       body: JSON.stringify(signupUserData),
     });
     console.log("signup response: ", responseData);

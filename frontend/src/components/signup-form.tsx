@@ -1,6 +1,6 @@
 "use client";
 
-import { GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd, Loader2 } from "lucide-react";
 import {
   Field,
   FieldDescription,
@@ -18,6 +18,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { useForm } from "react-hook-form";
 import { signupSchema, signupSchemaType } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 export default function SignupForm() {
   const signup = useAuthStore((state) => state.signup);
@@ -31,7 +32,19 @@ export default function SignupForm() {
     resolver: zodResolver(signupSchema),
   });
 
-  const handleSignup = () => {};
+  const handleSignup = async (signupUserData: signupSchemaType) => {
+    setIsLoading(true);
+    try {
+      console.log("signing up...");
+      await signup(signupUserData);
+      console.log("signup successful");
+      toast.success("Signed up successfuly");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -117,7 +130,16 @@ export default function SignupForm() {
           </Field>
 
           <Field>
-            <Button type="submit">Create account</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <div className="flex gap-2 items-center">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <p>Signing up...</p>
+                </div>
+              ) : (
+                "Create account"
+              )}
+            </Button>
           </Field>
 
           <ContinueWith />
