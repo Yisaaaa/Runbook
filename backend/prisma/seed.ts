@@ -2,6 +2,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'src/generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
+import { userData } from './data';
 
 dotenv.config();
 
@@ -25,14 +26,10 @@ async function main() {
 
   const hashedPass = await bcrypt.hash('hardpass', 10);
   const user = await prisma.user.create({
-    data: {
-      email: 'marleybob@gmail.com',
-      username: 'bobmarley',
-      passwordHash: hashedPass,
-    },
+    data: { ...userData, passwordHash: hashedPass },
   });
-
   console.log('Created user: ', user);
+
   console.log('Seeding completed');
 }
 
