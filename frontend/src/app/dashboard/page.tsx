@@ -1,13 +1,45 @@
-import NavBar from "@/components/navbar";
+"use client";
+
+import DashboardEmpty from "@/components/dashboard-empty";
+import DashboardSkeleton from "@/components/dashboard-skeleton";
+import RunbookCard from "@/components/runbook-card";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { useRunbook } from "@/queries/runbook";
 import { Plus, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Dashboard() {
+  const { data, isLoading, error } = useRunbook();
+  const [runbooks, setRunbooks] = useState<any[]>([]);
+
+  if (error) {
+    toast.error("Failed to fetch runbooks");
+  }
+
+  useEffect(() => {
+    const runbooks = [];
+    for (let i = 0; i <= 5; i++) {
+      runbooks.push({
+        title: "Installing Django",
+        updatedAt: "2025-12-15T11:35:40.529Z",
+        owner: "bobmarley",
+      });
+    }
+    setRunbooks(runbooks);
+  }, []);
+
+  const cards: any = [];
+
+  runbooks.forEach((runbook) => {
+    cards.push(<RunbookCard {...runbook} />);
+  });
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-10">
@@ -18,7 +50,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <Button variant={"secondary"} className="flex gap-4">
+        <Button variant={"secondary"} className="flex gap-2">
           <Plus />
           <span>New Runbook</span>
         </Button>
@@ -31,7 +63,9 @@ export default function Dashboard() {
         </InputGroupAddon>
       </InputGroup>
 
-      <div>{}</div>
+      <div>
+        {isLoading ? <DashboardSkeleton count={4} /> : <DashboardEmpty />}
+      </div>
     </div>
   );
 }
