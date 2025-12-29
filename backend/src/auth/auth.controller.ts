@@ -10,10 +10,15 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { AuthGuard } from './auth.guard';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/generated/prisma/client';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('signin')
   async signIn(@Body() signInDto: SignInDto) {
@@ -27,7 +32,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  getProfile(@Request() request: any) {
-    return request.user;
+  async getProfile(@Request() request: any) {
+    const { passwordHash, ...rest } = (await this.usersService.findByEmail(
+      request.user.email,
+    ))!;
+
+    return rest;
   }
 }
