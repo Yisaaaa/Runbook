@@ -1,8 +1,8 @@
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from 'src/generated/prisma/client';
+import { PrismaClient, Runbook } from 'src/generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
-import { userData } from './data';
+import { userData, runbooksData } from './data';
 
 dotenv.config();
 
@@ -30,11 +30,17 @@ async function main() {
   });
   console.log('Created user: ', user);
 
+  const runbooks = await prisma.runbook.createManyAndReturn({
+    data: runbooksData,
+  });
+
+  console.log('Created runbooks: ', runbooks);
   console.log('Seeding completed');
 }
 
 main()
   .catch((e) => {
+    console.log('Error while seeding data:');
     console.error(e);
     process.exit(1);
   })
