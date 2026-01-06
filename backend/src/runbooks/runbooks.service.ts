@@ -20,7 +20,17 @@ export class RunbooksService {
     return toRunbookResponseDto(runbook);
   }
 
-  async findAll(): Promise<RunbookResponseDto[]> {}
+  async findAll(): Promise<RunbookResponseDto[]> {
+    const runbooks = await this.prismaService.runbook.findMany({
+      include: {
+        user: {
+          select: { username: true },
+        },
+      },
+    });
+
+    return runbooks.map((rb) => toRunbookResponseDto(rb));
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} runbook`;
