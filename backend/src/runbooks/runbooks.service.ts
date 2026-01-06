@@ -1,19 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateRunbookDto } from './dto/update-runbook.dto';
-import { RunbookUncheckedCreateInput } from 'src/generated/prisma/models';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RunbookResponseDto } from './dto/runbook-response.dto';
+import { toRunbookResponseDto } from './mapper/runbook.mapper';
+import { CreateRunbookDto } from './dto/create-runbook.dto';
 
 @Injectable()
 export class RunbooksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createRunbookDto: RunbookUncheckedCreateInput) {
-    return await this.prismaService.runbook.create({ data: createRunbookDto });
+  async create(
+    createRunbookDto: CreateRunbookDto,
+  ): Promise<RunbookResponseDto> {
+    const runbook = await this.prismaService.runbook.create({
+      data: createRunbookDto,
+      include: { user: { select: { username: true } } },
+    });
+
+    return toRunbookResponseDto(runbook);
   }
 
-  async findAll() {
-    return await this.prismaService.runbook.findMany();
-  }
+  async findAll(): Promise<RunbookResponseDto[]> {}
 
   findOne(id: number) {
     return `This action returns a #${id} runbook`;

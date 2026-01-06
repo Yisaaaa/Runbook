@@ -10,13 +10,17 @@ import {
 import { RunbooksService } from './runbooks.service';
 import { UpdateRunbookDto } from './dto/update-runbook.dto';
 import { CreateRunbookDto } from './dto/create-runbook.dto';
+import type { Runbook } from 'src/generated/prisma/client';
+import { RunbookResponseDto } from './dto/runbook-response.dto';
 
 @Controller('runbooks')
 export class RunbooksController {
   constructor(private readonly runbooksService: RunbooksService) {}
 
   @Post()
-  create(@Body() createRunbookDto: CreateRunbookDto) {
+  create(
+    @Body() createRunbookDto: CreateRunbookDto,
+  ): Promise<RunbookResponseDto> {
     console.log('Create');
     return this.runbooksService.create(createRunbookDto);
   }
