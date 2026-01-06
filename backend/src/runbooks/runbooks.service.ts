@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRunbookDto } from './dto/create-runbook.dto';
 import { UpdateRunbookDto } from './dto/update-runbook.dto';
 import { RunbookUncheckedCreateInput } from 'src/generated/prisma/models';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,8 +11,8 @@ export class RunbooksService {
     return await this.prismaService.runbook.create({ data: createRunbookDto });
   }
 
-  findAll() {
-    return `This action returns all runbooks`;
+  async findAll() {
+    return await this.prismaService.runbook.findMany();
   }
 
   findOne(id: number) {
