@@ -19,7 +19,7 @@ export default function AuthRedirect({
 
   useEffect(() => {
     if (user && !isLoading) {
-      router.replace("/dashboard");
+      router.replace("/dashboard/runbooks");
     }
   }, [user, isLoading, router]);
 

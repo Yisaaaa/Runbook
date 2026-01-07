@@ -33,7 +33,7 @@ export default function LoginForm() {
       console.log("Loggin in...");
       await login(loginUserData);
       toast.success("Signed in successfully");
-      router.replace("/dashboard");
+      router.replace("/dashboard/runbooks");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
