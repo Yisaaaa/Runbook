@@ -39,7 +39,9 @@ export default function RunbookCard({
             <span>•</span>
             <div className="truncate">
               Created by:{" "}
-              {runbookData.createdBy === username ? "You" : username}
+              {runbookData.createdBy === username
+                ? "You"
+                : runbookData.createdBy}
             </div>
           </div>
         </div>
