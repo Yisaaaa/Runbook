@@ -10,35 +10,27 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { useRunbook } from "@/queries/runbook";
+import { Runbook } from "@/types/runbook";
 import { Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Dashboard() {
   const { data, isLoading, error } = useRunbook();
-  const [runbooks, setRunbooks] = useState<any[]>([]);
 
   if (error) {
     toast.error("Failed to fetch runbooks");
   }
 
-  useEffect(() => {
-    const runbooks = [];
-    for (let i = 0; i <= 5; i++) {
-      runbooks.push({
-        title: "Installing Django",
-        updatedAt: "2025-12-15T11:35:40.529Z",
-        owner: "bobmarley",
-      });
-    }
-    setRunbooks(runbooks);
-  }, []);
-
-  const cards: any = [];
-
-  runbooks.forEach((runbook) => {
-    cards.push(<RunbookCard {...runbook} />);
-  });
+  console.log("data: ", data);
+  let cards;
+  if (data) {
+    cards = data.map((rb) => (
+      <li key={rb.id}>
+        <RunbookCard runbookData={rb} />
+      </li>
+    ));
+    cards = <ul>{cards}</ul>;
+  }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -64,7 +56,11 @@ export default function Dashboard() {
       </InputGroup>
 
       <div>
-        {isLoading ? <DashboardSkeleton count={4} /> : <DashboardEmpty />}
+        {isLoading ? (
+          <DashboardSkeleton count={4} />
+        ) : (
+          cards || <DashboardEmpty />
+        )}
       </div>
     </div>
   );
