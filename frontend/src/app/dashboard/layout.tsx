@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }) {
   return (
     <ProtectedRoute>
-      <NavBar classname="mb-18" />
+      <NavBar />
       {children}
     </ProtectedRoute>
   );
