@@ -15,6 +15,7 @@ import clsx from "clsx";
 import { ArrowLeft } from "lucide-react";
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
+import RunbookPreviewPage from "@/components/runbook-preview";
 
 export default function RunbookPage() {
   const [title, setTitle] = useState("");
@@ -99,16 +100,21 @@ export default function RunbookPage() {
           </Select>
         </div>
         <div className="">
-          <Editor
-            height="calc(100dvh - 250px)"
-            defaultLanguage="markdown"
-            theme="vs-dark"
-            value={content}
-            onChange={(value) => setContent(value || "")}
-            options={{
-              fontSize: 17,
-            }}
-          />
+          {isEditMode ? (
+            <Editor
+              height="calc(100dvh - 250px)"
+              defaultLanguage="markdown"
+              theme="vs-dark"
+              value={content}
+              onChange={(value) => setContent(value || "")}
+              options={{
+                fontSize: 17,
+                minimap: { enabled: false },
+              }}
+            />
+          ) : (
+            <RunbookPreviewPage content={content} />
+          )}
         </div>
       </div>
     </div>
