@@ -113,7 +113,7 @@ export default function RunbookPage() {
               }}
             />
           ) : (
-            <RunbookPreviewPage content={content} />
+            <RunbookPreviewPage content={content} runtime={runtime} />
           )}
         </div>
       </div>
