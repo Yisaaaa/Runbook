@@ -12,6 +12,7 @@ import {
 import { useRunbook } from "@/queries/runbook";
 import { Runbook } from "@/types/runbook";
 import { Plus, Search } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 export default function Dashboard() {
@@ -42,9 +43,11 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <Button variant={"secondary"} className="flex gap-2">
-          <Plus />
-          <span>New Runbook</span>
+        <Button variant={"secondary"} className="flex gap-2" asChild>
+          <Link href={`/dashboard/runbooks/new`} className="flex gap-2">
+            <Plus />
+            <span>New Runbook</span>
+          </Link>
         </Button>
       </div>
 
