@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateRunbookDto } from './dto/update-runbook.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RunbookResponseDto } from './dto/runbook-response.dto';
@@ -33,7 +33,15 @@ export class RunbooksService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} runbook`;
+    const runbook = this.prismaService.runbook.findUnique({
+      where: { id },
+    });
+
+    if (!runbook) {
+      throw new NotFoundException('Runbook not found');
+    }
+
+    return runbook;
   }
 
   update(id: number, updateRunbookDto: UpdateRunbookDto) {
