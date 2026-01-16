@@ -16,11 +16,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <script
-        async
-        crossOrigin="anonymous"
-        src="https://tweakcn.com/live-preview.min.js"
-      />
       <body className={`${poppins.className} antialiased`}>
         <QueryProvider>
           {children}
