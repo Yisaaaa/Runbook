@@ -1,8 +1,10 @@
-import { BookOpen, Clock, Link } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
 import { Button } from "./ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { useAuthStore } from "@/store/authStore";
 import { Runbook } from "@/types/runbook";
+import Link from "next/link";
+import { start } from "repl";
 
 interface RunbookCardProps {
   classname?: string;
@@ -16,12 +18,11 @@ export default function RunbookCard({
   const username = useAuthStore((state) => state.user?.username);
 
   return (
-    <Button
-      asChild
-      variant="ghost"
-      className={`${classname} group flex gap-5 p-5 py-10 w-full justify-start`}
-    >
-      <div>
+    <Button asChild variant="ghost" className={`${classname}`}>
+      <Link
+        href={`/dashboard/runbooks/${runbookData.id}`}
+        className={`group flex gap-5 p-5 py-10 w-full justify-start`}
+      >
         <div className="p-4 bg-muted rounded group-hover:bg-accent transition-colors">
           <BookOpen className="w-5 h-5" />
         </div>
@@ -45,7 +46,7 @@ export default function RunbookCard({
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     </Button>
   );
 }
