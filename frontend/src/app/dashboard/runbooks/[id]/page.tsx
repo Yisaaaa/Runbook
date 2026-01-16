@@ -13,11 +13,27 @@ import {
 import { SelectItem } from "@/components/ui/select";
 import clsx from "clsx";
 import { ArrowLeft } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import RunbookPreviewPage from "@/components/runbook-preview";
+import { RunbookSnapshot } from "@/types/runbook";
+import { useParams } from "next/navigation";
+import { useRunbookQueryById } from "@/queries/runbook";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function RunbookPage() {
+  const params = useParams();
+  const router = useRouter();
+  const runbookId = params.id && params.id !== "new" ? Number(params.id) : null;
+  const { data, isLoading, isError, error } = useRunbookQueryById(runbookId);
+
+  const [runbookSnapshot, setRunbookSnapshot] = useState<RunbookSnapshot>({
+    title: "",
+    runtime: "",
+    content: "",
+  });
+
   const [title, setTitle] = useState("");
   const [isEditMode, setIsEditMode] = useState(true);
   const [content, setContent] = useState("");
@@ -32,9 +48,50 @@ export default function RunbookPage() {
     }
   };
 
+  const handleBackToDashboard = () => {
+    if (
+      title !== runbookSnapshot.title ||
+      content !== runbookSnapshot.content ||
+      !!runtime !== !!runbookSnapshot.runtime
+    ) {
+      const confirmLeave = window.confirm(
+        "You have unsaved changes. Are you sure you want to leave?"
+      );
+      if (!confirmLeave) {
+        return;
+      }
+    }
+    router.replace("/dashboard/runbooks");
+  };
+
+  useEffect(() => {
+    if (isError && error instanceof Error) {
+      toast.error(error.message);
+      router.push("/dashboard/runbooks");
+    }
+  }, [isError, error]);
+
+  useEffect(() => {
+    if (params.id && data) {
+      setTitle(data.title);
+      setContent(data.content);
+      setRuntime(data.runtime);
+
+      setRunbookSnapshot({
+        title: data.title,
+        content: data.content,
+        runtime: data.runtime,
+      });
+    }
+  }, [data, params.id]);
+
   return (
     <div className="max-w-5xl mx-auto mt-4 mb-10">
-      <Button variant="link" className="flex text-muted-foreground mb-9">
+      <Button
+        onClick={handleBackToDashboard}
+        variant="link"
+        className="flex text-muted-foreground mb-9 items-center justify-start"
+      >
         <ArrowLeft className="w-5 h-5" />
         <span>Back to dashboard</span>
       </Button>

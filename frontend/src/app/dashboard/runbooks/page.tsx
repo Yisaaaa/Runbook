@@ -9,14 +9,13 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { useRunbook } from "@/queries/runbook";
-import { Runbook } from "@/types/runbook";
+import { useRunbooksQuery } from "@/queries/runbook";
 import { Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
 export default function Dashboard() {
-  const { data, isLoading, error } = useRunbook();
+  const { data, isLoading, error } = useRunbooksQuery();
 
   if (error) {
     toast.error("Failed to fetch runbooks");

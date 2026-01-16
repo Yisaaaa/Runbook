@@ -8,3 +8,9 @@ export interface Runbook {
   userId: number;
   createdBy: string;
 }
+
+export interface RunbookSnapshot {
+  title: string;
+  runtime: string | undefined;
+  content: string;
+}
