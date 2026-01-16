@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -25,6 +26,18 @@ export default function RunbookPreviewPage({
     >
       <ReactMarkdown
         components={{
+          pre({ children }) {
+            const child = Array.isArray(children) ? children[0] : children;
+
+            if (
+              typeof child.props?.className === "string" &&
+              child.props.className.includes("runnable")
+            ) {
+              return <>{children}</>;
+            }
+
+            return <pre>{children}</pre>;
+          },
           code(props) {
             const { children, className, node, ...rest } = props;
             const code = String(children).replace(/\n$/, "");
