@@ -16,11 +16,12 @@ import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import RunbookPreviewPage from "@/components/runbook-preview";
-import { RunbookSnapshot } from "@/types/runbook";
+import { runbookCreateSchema, RunbookSnapshot } from "@/types/runbook";
 import { useParams } from "next/navigation";
 import { useRunbookQueryById } from "@/queries/runbook";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { fetchWrapper } from "@/lib/api";
 
 export default function RunbookPage() {
   const params = useParams();
@@ -52,7 +53,7 @@ export default function RunbookPage() {
     if (
       title !== runbookSnapshot.title ||
       content !== runbookSnapshot.content ||
-      !!runtime !== !!runbookSnapshot.runtime
+      runtime !== runbookSnapshot.runtime
     ) {
       const confirmLeave = window.confirm(
         "You have unsaved changes. Are you sure you want to leave?"
@@ -62,6 +63,32 @@ export default function RunbookPage() {
       }
     }
     router.replace("/dashboard/runbooks");
+  };
+
+  const handleSaveRunbook = async () => {
+    const runbook = {
+      title,
+      content,
+      runtime,
+    };
+
+    const parsed = runbookCreateSchema.safeParse(runbook);
+
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
+      return;
+    }
+
+    try {
+      const method = runbookId ? "PUT" : "POST";
+      const url = runbookId ? `/runbooks/${runbookId}` : "/runbooks";
+
+      await fetchWrapper(url, { method, body: JSON.stringify(parsed.data) });
+      toast.success("Runbook saved");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to save runbook");
+    }
   };
 
   useEffect(() => {
@@ -107,10 +134,18 @@ export default function RunbookPage() {
         </div>
 
         <div className="flex gap-1.5">
-          <Button variant="outline" className="px-2">
+          <Button
+            variant="outline"
+            className="px-2"
+            onClick={handleBackToDashboard}
+          >
             Cancel Changes
           </Button>
-          <Button variant="default" className="px-2">
+          <Button
+            variant="default"
+            className="px-2"
+            onClick={handleSaveRunbook}
+          >
             Save Changes...
           </Button>
         </div>
