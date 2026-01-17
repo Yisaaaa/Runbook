@@ -1,7 +1,7 @@
 import { Runbook, User } from 'src/generated/prisma/client';
 import { RunbookResponseDto } from '../dto/runbook-response.dto';
 
-type RunbookWithUser = Runbook & {
+export type RunbookWithUser = Runbook & {
   user: Pick<User, 'username'>;
 };
 

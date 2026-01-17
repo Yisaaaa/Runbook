@@ -44,7 +44,7 @@ model Runbook {
   @@map("runbooks")
   id Int @default(autoincrement()) @id
   title String
-  runtime String
+  runtime String?
   content String
   privacy RunbookPrivacy @default(PRIVATE)
   shareToken String? @unique

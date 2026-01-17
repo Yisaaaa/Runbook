@@ -1,10 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { RunbookPrivacy } from 'src/generated/prisma/enums';
 
 export class CreateRunbookDto {
@@ -14,9 +8,9 @@ export class CreateRunbookDto {
 
   @IsNotEmpty()
   @IsString()
-  runtime: string;
+  @IsOptional()
+  runtime?: string;
 
-  @IsNotEmpty()
   @IsString()
   content: string;
 
@@ -27,7 +21,4 @@ export class CreateRunbookDto {
   @IsNotEmpty()
   @IsString()
   shareToken?: string;
-
-  @IsNumber()
-  userId: number;
 }

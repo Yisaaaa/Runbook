@@ -4,6 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RunbookResponseDto } from './dto/runbook-response.dto';
 import { toRunbookResponseDto } from './mapper/runbook.mapper';
 import { CreateRunbookDto } from './dto/create-runbook.dto';
+import { RunbookWithUser } from './mapper/runbook.mapper';
+import { RunbookUncheckedCreateInput } from 'src/generated/prisma/models';
 
 @Injectable()
 export class RunbooksService {
@@ -11,9 +13,25 @@ export class RunbooksService {
 
   async create(
     createRunbookDto: CreateRunbookDto,
+    userId: number,
   ): Promise<RunbookResponseDto> {
+    const data: RunbookUncheckedCreateInput = {
+      title: createRunbookDto.title,
+      content: createRunbookDto.content,
+      privacy: createRunbookDto.privacy,
+      userId,
+    };
+
+    if (createRunbookDto.runtime !== undefined) {
+      data.runtime = createRunbookDto.runtime;
+    }
+
+    if (createRunbookDto.shareToken !== undefined) {
+      data.shareToken = createRunbookDto.shareToken;
+    }
+
     const runbook = await this.prismaService.runbook.create({
-      data: createRunbookDto,
+      data,
       include: { user: { select: { username: true } } },
     });
 
@@ -21,31 +39,40 @@ export class RunbooksService {
   }
 
   async findAll(): Promise<RunbookResponseDto[]> {
-    const runbooks = await this.prismaService.runbook.findMany({
-      include: {
-        user: {
-          select: { username: true },
+    const runbooks: RunbookWithUser[] =
+      await this.prismaService.runbook.findMany({
+        include: {
+          user: {
+            select: { username: true },
+          },
         },
-      },
-    });
+      });
 
     return runbooks.map((rb) => toRunbookResponseDto(rb));
   }
 
-  findOne(id: number) {
-    const runbook = this.prismaService.runbook.findUnique({
-      where: { id },
-    });
+  async findOne(id: number) {
+    const runbook: RunbookWithUser | null =
+      await this.prismaService.runbook.findUnique({
+        where: { id },
+        include: { user: { select: { username: true } } },
+      });
 
     if (!runbook) {
       throw new NotFoundException('Runbook not found');
     }
 
-    return runbook;
+    return toRunbookResponseDto(runbook);
   }
 
-  update(id: number, updateRunbookDto: UpdateRunbookDto) {
-    return `This action updates a #${id} runbook`;
+  async update(id: number, updateRunbookDto: UpdateRunbookDto) {
+    const runbook = await this.prismaService.runbook.update({
+      where: { id },
+      data: updateRunbookDto,
+      include: { user: { select: { username: true } } },
+    });
+
+    return toRunbookResponseDto(runbook);
   }
 
   remove(id: number) {

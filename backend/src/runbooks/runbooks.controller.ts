@@ -3,25 +3,31 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { RunbooksService } from './runbooks.service';
 import { UpdateRunbookDto } from './dto/update-runbook.dto';
 import { CreateRunbookDto } from './dto/create-runbook.dto';
 import { RunbookResponseDto } from './dto/runbook-response.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CurrentUser } from 'src/auth/user.decorator';
+import type { JwtPayload } from 'src/auth/auth.types';
 
 @Controller('runbooks')
 export class RunbooksController {
   constructor(private readonly runbooksService: RunbooksService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(
     @Body() createRunbookDto: CreateRunbookDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<RunbookResponseDto> {
-    console.log('Create');
-    return this.runbooksService.create(createRunbookDto);
+    console.log('Create ', user);
+    return this.runbooksService.create(createRunbookDto, user.sub);
   }
 
   @Get()
@@ -34,7 +40,7 @@ export class RunbooksController {
     return this.runbooksService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateRunbookDto: UpdateRunbookDto) {
     return this.runbooksService.update(+id, updateRunbookDto);
   }

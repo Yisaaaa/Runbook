@@ -11,7 +11,8 @@ import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { AuthGuard } from './auth.guard';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/generated/prisma/client';
+import { CurrentUser } from './user.decorator';
+import type { JwtPayload } from './auth.types';
 
 @Controller('auth')
 export class AuthController {
@@ -32,9 +33,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(@Request() request: any) {
+  async getProfile(@CurrentUser() user: JwtPayload) {
     const { passwordHash, ...rest } = (await this.usersService.findByEmail(
-      request.user.email,
+      user.email,
     ))!;
 
     return rest;

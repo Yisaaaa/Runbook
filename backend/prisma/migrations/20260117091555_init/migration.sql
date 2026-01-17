@@ -22,7 +22,7 @@ CREATE TABLE "users" (
 CREATE TABLE "runbooks" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
-    "runtime" TEXT NOT NULL,
+    "runtime" TEXT,
     "content" TEXT NOT NULL,
     "privacy" "RunbookPrivacy" NOT NULL DEFAULT 'PRIVATE',
     "shareToken" TEXT,
