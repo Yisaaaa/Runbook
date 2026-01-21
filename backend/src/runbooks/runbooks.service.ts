@@ -78,4 +78,40 @@ export class RunbooksService {
   remove(id: number) {
     return `This action removes a #${id} runbook`;
   }
+
+  async getRunbookRunnableBlocks(id: number) {
+    const runbook = await this.prismaService.runbook.findUnique({
+      where: { id },
+      select: { content: true },
+    });
+
+    if (!runbook) {
+      throw new NotFoundException('Runbook not found');
+    }
+
+    const runnableBlocks: { runnableBlock: string; index: number }[] = [];
+    const contentLines = runbook.content.split('\n');
+    let runnableBlockStart = -1;
+    let currentIndex = 0;
+
+    for (let line = 0; line < contentLines.length; line++) {
+      const contentLine = contentLines[line];
+
+      if (contentLine.startsWith('```runnable')) {
+        runnableBlockStart = line;
+      } else if (runnableBlockStart !== -1 && contentLine.startsWith('```')) {
+        const runnableBlock = contentLines
+          .slice(runnableBlockStart, line + 1)
+          .join('\n');
+
+        runnableBlocks.push({ runnableBlock, index: currentIndex });
+        runnableBlockStart = -1;
+        currentIndex++;
+      }
+    }
+
+    console.log(runnableBlocks);
+
+    return runnableBlocks;
+  }
 }

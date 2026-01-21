@@ -36,8 +36,13 @@ export class RunbooksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.runbooksService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.runbooksService.findOne(id);
+  }
+
+  @Get(':id/runnable-blocks')
+  getRunbookRunnableBlocks(@Param('id') id: number) {
+    return this.runbooksService.getRunbookRunnableBlocks(id);
   }
 
   @Put(':id')
