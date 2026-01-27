@@ -98,12 +98,13 @@ export class RunbooksService {
       const contentLine = contentLines[line];
 
       if (contentLine.startsWith('```runnable')) {
-        runnableBlockStart = line;
+        runnableBlockStart = line + 1;
       } else if (runnableBlockStart !== -1 && contentLine.startsWith('```')) {
         const runnableBlock = contentLines
-          .slice(runnableBlockStart, line + 1)
+          .slice(runnableBlockStart, line)
           .join('\n');
 
+        runnableBlock.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
         runnableBlocks.push({ runnableBlock, index: currentIndex });
         runnableBlockStart = -1;
         currentIndex++;
