@@ -23,6 +23,11 @@ export interface RunbookSnapshot {
   content: string;
 }
 
+export interface RunnableBlock {
+  code: string;
+  index: number;
+}
+
 export const runbookCreateSchema = z.object({
   title: z.string().min(1, "Runbook title must not be empty"),
   runtime: z.string().optional(),

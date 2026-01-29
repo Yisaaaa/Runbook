@@ -1,5 +1,5 @@
 import { fetchWrapper } from "@/lib/api";
-import { Runbook } from "@/types/runbook";
+import { Runbook, RunnableBlock } from "@/types/runbook";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
@@ -13,15 +13,24 @@ export function useRunbooksQuery() {
 
 export function useRunbookQueryById(runbookId: number | null) {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useQuery<Runbook>({
-    queryKey: ["runbook", runbookId],
+    queryKey: ["runbooks", runbookId],
     queryFn: () => fetchWrapper(`/runbooks/${runbookId}`),
     initialData: () => {
       const runbooks = queryClient.getQueryData<Runbook[]>(["runbooks"]);
       return runbooks?.find((rb) => rb.id === runbookId);
     },
     enabled: !!runbookId,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useRunnableBlockQuery(runbookId: number | null) {
+  return useQuery<RunnableBlock[]>({
+    queryKey: ["runnableBlocks", runbookId],
+    queryFn: () => fetchWrapper(`/runbooks/${runbookId}/runnable-blocks`),
+    enabled: !!runbookId,
+    refetchOnWindowFocus: false,
   });
 }
