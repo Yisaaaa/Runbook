@@ -56,7 +56,7 @@ export default function RunbookPage() {
       runtime !== runbookSnapshot.runtime
     ) {
       const confirmLeave = window.confirm(
-        "You have unsaved changes. Are you sure you want to leave?"
+        "You have unsaved changes. Are you sure you want to leave?",
       );
       if (!confirmLeave) {
         return;
@@ -205,7 +205,11 @@ export default function RunbookPage() {
               }}
             />
           ) : (
-            <RunbookPreviewPage content={content} runtime={runtime} />
+            <RunbookPreviewPage
+              content={content}
+              runtime={runtime}
+              runbookId={runbookId}
+            />
           )}
         </div>
       </div>
