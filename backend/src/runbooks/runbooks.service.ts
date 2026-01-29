@@ -89,7 +89,7 @@ export class RunbooksService {
       throw new NotFoundException('Runbook not found');
     }
 
-    const runnableBlocks: { runnableBlock: string; index: number }[] = [];
+    const runnableBlocks: { code: string; index: number }[] = [];
     const contentLines = runbook.content.split('\n');
     let runnableBlockStart = -1;
     let currentIndex = 0;
@@ -105,7 +105,7 @@ export class RunbooksService {
           .join('\n');
 
         runnableBlock.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
-        runnableBlocks.push({ runnableBlock, index: currentIndex });
+        runnableBlocks.push({ code: runnableBlock, index: currentIndex });
         runnableBlockStart = -1;
         currentIndex++;
       }
