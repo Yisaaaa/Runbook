@@ -35,9 +35,10 @@ model User {
   id Int @default(autoincrement()) @id
   email String @unique
   username String
-  createdAt DateTime @default(now())
-  passwordHash String
+  createdAt DateTime @default(now()) @map("created_at")
+  passwordHash String @map("password_hash")
   runbooks Runbook[]
+  sessions Session[]
 }
 
 model Runbook {
@@ -47,10 +48,10 @@ model Runbook {
   runtime String?
   content String
   privacy RunbookPrivacy @default(PRIVATE)
-  shareToken String? @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId Int
+  shareToken String? @unique @map("share_token")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId Int @map("user_id")
   user User @relation(fields: [userId], references: [id])
   sessions Session[]
 }
@@ -58,25 +59,27 @@ model Runbook {
 model Session {
   @@map("sessions")
   id Int @default(autoincrement()) @id
-  runbookId Int
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  runbookId Int @map("runbook_id")
   runbook Runbook @relation(fields: [runbookId], references: [id])
-  contanerId String @unique
-  createdAt DateTime @default(now())
-  expiresAt DateTime
+  containerId String @unique @map("container_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
   status SessionStatus @default(ACTIVE)
-  lastActivityAt DateTime @default(now())
+  lastActivityAt DateTime @default(now()) @map("last_activity_at")
   executionLogs ExecutionLog[]
 }
 
 model ExecutionLog {
   @@map("execution_logs")
   id Int @default(autoincrement()) @id
-  sessionId Int
+  sessionId Int @map("session_id")
   session Session @relation(fields: [sessionId], references: [id])
   code String
   output String
   status ExecutionStatus
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 }
 
 
