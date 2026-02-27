@@ -4,7 +4,7 @@ import { RunbookPrivacy } from 'src/generated/prisma/enums';
 export class CreateRunbookDto {
   @IsNotEmpty()
   @IsString()
-  title: string;
+  title!: string;
 
   @IsNotEmpty()
   @IsString()
@@ -12,10 +12,10 @@ export class CreateRunbookDto {
   runtime?: string;
 
   @IsString()
-  content: string;
+  content!: string;
 
   @IsEnum(RunbookPrivacy)
-  privacy: RunbookPrivacy;
+  privacy!: RunbookPrivacy;
 
   @IsOptional()
   @IsNotEmpty()

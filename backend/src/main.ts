@@ -5,6 +5,7 @@ import {
   RequestMethod,
   ValidationPipe,
 } from '@nestjs/common';
+import { pullAllRuntimeImages } from './common/docker/pull-images';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,7 +38,18 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.CORS_ORIGIN,
   });
-  await app.listen(process.env.PORT ?? 3000);
+
+  try {
+    console.log('Pulling runtime images...');
+    await pullAllRuntimeImages();
+  } catch (error) {
+    console.error('Error pulling images on startup: ', error);
+  }
+
+  const port = process.env.PORT || 3000;
+
+  await app.listen(port);
+  console.log(`Server is running on port ${port}`);
 }
 
 bootstrap();

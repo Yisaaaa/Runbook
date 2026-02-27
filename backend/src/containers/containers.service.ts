@@ -7,9 +7,7 @@ import Docker from 'dockerode';
 export class ContainersService {
   // This service is for Docker container management related operations, such as creating, starting, stopping, and removing containers.
 
-  private readonly docker = new Docker({
-    socketPath: '/var/run/docker.sock',
-  });
+  private readonly docker = new Docker();
 
   constructor(
     private readonly runtimeRegistryService: RuntimeRegistryService,
@@ -21,7 +19,10 @@ export class ContainersService {
       const container = await this.docker.createContainer({
         Image: runtimeConfig.image,
         Cmd: ['sleep', 'infinity'],
+        Tty: true,
+        OpenStdin: true,
         HostConfig: {
+          NanoCpus: 1_000_000_000, // 1 CPU
           Memory: runtimeConfig.memoryMb * 1024 * 1024,
           NetworkMode: 'none',
         },

@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RunbooksModule } from './runbooks/runbooks.module';
+import { ContainersModule } from './containers/containers.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RunbooksModule } from './runbooks/runbooks.module';
     UsersModule,
     AuthModule,
     RunbooksModule,
+    ContainersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
