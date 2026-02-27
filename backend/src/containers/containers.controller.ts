@@ -23,4 +23,14 @@ export class ContainersController {
     console.log('Removing container with ID: ', id);
     return this.containersService.remove(id);
   }
+
+  @Post('exec/:id')
+  async execCommand(
+    @Param('id') id: string,
+    @Body() data: { command: string[]; timeoutMs: number },
+  ) {
+    console.log('Executing command in container with ID: ', id);
+    console.log('Command: ', data.command, 'Timeout (ms): ', data.timeoutMs);
+    return this.containersService.exec(id, data.command, data.timeoutMs);
+  }
 }

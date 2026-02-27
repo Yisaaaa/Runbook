@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Runtime } from 'src/common/enums/runtime.enum';
 import { RuntimeRegistryService } from './runtime-registry.service';
 import Docker from 'dockerode';
+import { resolve } from 'path';
+import { PassThrough } from 'stream';
 
 @Injectable()
 export class ContainersService {
@@ -37,10 +39,61 @@ export class ContainersService {
   }
 
   async exec(
-    containerId: number,
+    containerId: string,
     command: string[],
     timeoutMs: number,
-  ): Promise<any> {}
+  ): Promise<any> {
+    const container = this.docker.getContainer(containerId);
+    let stdout = '';
+    let stderr = '';
+
+    try {
+      const exec = await container.exec({
+        Cmd: command,
+        AttachStdout: true,
+        AttachStderr: true,
+      });
+      const stream = await exec.start({ hijack: true, stdin: false });
+
+      return new Promise<{ stdout: string; stderr: string; exitCode: number }>(
+        (resolve, reject) => {
+          const timeout = setTimeout(() => {
+            stream.destroy();
+            reject(
+              new Error(`Command execution timed out after ${timeoutMs}ms`),
+            );
+          }, timeoutMs);
+
+          const stdoutStream = new PassThrough();
+          const stderrStream = new PassThrough();
+
+          stdoutStream.on('data', (chunk) => (stdout += chunk.toString()));
+          stderrStream.on('data', (chunk) => (stderr += chunk.toString()));
+
+          container.modem.demuxStream(stream, stdoutStream, stderrStream);
+
+          stream.on('end', async () => {
+            clearTimeout(timeout);
+            const inspect = await exec.inspect();
+            console.log('inspect: ', inspect);
+            resolve({
+              stdout: stdout.trim(),
+              stderr: stderr.trim(),
+              exitCode: inspect.ExitCode ?? -1,
+            });
+          });
+
+          stream.on('error', (err) => {
+            clearTimeout(timeout);
+            reject(err);
+          });
+        },
+      );
+    } catch (error) {
+      console.error('Error executing command in container: ', error);
+      throw error;
+    }
+  }
 
   async stop(containerId: string) {
     const container = this.docker.getContainer(containerId.toString());
