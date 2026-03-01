@@ -40,7 +40,6 @@ CREATE TABLE "sessions" (
     "runbook_id" INTEGER NOT NULL,
     "container_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "expires_at" TIMESTAMP(3) NOT NULL,
     "status" "SessionStatus" NOT NULL DEFAULT 'ACTIVE',
     "last_activity_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
