@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Runtime } from 'src/common/enums/runtime.enum';
 import { RuntimeRegistryService } from './runtime-registry.service';
 import Docker from 'dockerode';
-import { resolve } from 'path';
 import { PassThrough } from 'stream';
 
 @Injectable()

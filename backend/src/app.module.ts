@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { RunbooksModule } from './runbooks/runbooks.module';
 import { ContainersModule } from './containers/containers.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ContainersModule } from './containers/containers.module';
     AuthModule,
     RunbooksModule,
     ContainersModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
