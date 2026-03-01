@@ -37,6 +37,7 @@ model User {
   username String
   createdAt DateTime @default(now()) @map("created_at")
   passwordHash String @map("password_hash")
+  
   runbooks Runbook[]
   sessions Session[]
 }
@@ -52,33 +53,36 @@ model Runbook {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+
   sessions Session[]
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Session {
   @@map("sessions")
   id Int @default(autoincrement()) @id
   userId Int
-  user User @relation(fields: [userId], references: [id])
   runbookId Int @map("runbook_id")
-  runbook Runbook @relation(fields: [runbookId], references: [id])
   containerId String @unique @map("container_id")
   createdAt DateTime @default(now()) @map("created_at")
   status SessionStatus @default(ACTIVE)
   lastActivityAt DateTime @default(now()) @updatedAt @map("last_activity_at") 
+
   executionLogs ExecutionLog[]
+  user User @relation(fields: [userId], references: [id])
+  runbook Runbook @relation(fields: [runbookId], references: [id])
 }
 
 model ExecutionLog {
   @@map("execution_logs")
   id Int @default(autoincrement()) @id
   sessionId Int @map("session_id")
-  session Session @relation(fields: [sessionId], references: [id])
   code String
   output String
   status ExecutionStatus
   createdAt DateTime @default(now()) @map("created_at")
+  
+  session Session @relation(fields: [sessionId], references: [id])
 }
 
 
