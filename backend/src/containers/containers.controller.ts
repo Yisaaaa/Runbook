@@ -7,9 +7,8 @@ export class ContainersController {
   constructor(private readonly containersService: ContainersService) {}
 
   @Post('create')
-  async createContainer(@Body() data: CreateContainerDto): Promise<string> {
-    console.log('Creating container for runtime: ', data.runtime);
-    return this.containersService.createContainer(data.runtime);
+  async createContainer(): Promise<string> {
+    return this.containersService.createContainer();
   }
 
   @Delete('stop/:id')

@@ -6,7 +6,7 @@ import { ContainersController } from './containers.controller';
 @Module({
   controllers: [ContainersController],
   providers: [ContainersService, RuntimeRegistryService],
-  exports: [],
+  exports: [ContainersService],
   imports: [],
 })
 export class ContainersModule {}

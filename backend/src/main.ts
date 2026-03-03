@@ -39,12 +39,12 @@ async function bootstrap() {
     origin: process.env.CORS_ORIGIN,
   });
 
-  try {
-    console.log('Pulling runtime images...');
-    await pullAllRuntimeImages();
-  } catch (error) {
-    console.error('Error pulling images on startup: ', error);
-  }
+  // try {
+  //   console.log('Pulling runtime images...');
+  //   await pullAllRuntimeImages();
+  // } catch (error) {
+  //   console.error('Error pulling images on startup: ', error);
+  // }
 
   const port = process.env.PORT || 3000;
 

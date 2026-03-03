@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Runtime } from 'src/common/enums/runtime.enum';
 import { RuntimeRegistryService } from './runtime-registry.service';
 import Docker from 'dockerode';
 import { PassThrough } from 'stream';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ContainersService {
@@ -12,19 +12,19 @@ export class ContainersService {
 
   constructor(
     private readonly runtimeRegistryService: RuntimeRegistryService,
+    private readonly configService: ConfigService,
   ) {}
 
-  async createContainer(runtime: Runtime): Promise<string> {
-    const runtimeConfig = this.runtimeRegistryService.getConfig(runtime);
+  async createContainer(): Promise<string> {
     try {
       const container = await this.docker.createContainer({
-        Image: runtimeConfig.image,
+        Image: this.configService.get<string>('CONTAINER_IMAGE'),
         Cmd: ['sleep', 'infinity'],
         Tty: true,
         OpenStdin: true,
         HostConfig: {
           NanoCpus: 1_000_000_000, // 1 CPU
-          Memory: runtimeConfig.memoryMb * 1024 * 1024,
+          Memory: 512 * 1024 * 1024,
           NetworkMode: 'none',
         },
       });
