@@ -2,7 +2,7 @@
 CREATE TYPE "RunbookPrivacy" AS ENUM ('PRIVATE', 'PUBLIC', 'SHARED');
 
 -- CreateEnum
-CREATE TYPE "SessionStatus" AS ENUM ('ACTIVE', 'EXPIRED');
+CREATE TYPE "SessionStatus" AS ENUM ('ACTIVE', 'EXPIRED', 'TERMINATED');
 
 -- CreateEnum
 CREATE TYPE "ExecutionStatus" AS ENUM ('SUCCESS', 'FAILURE');

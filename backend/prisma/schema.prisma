@@ -23,6 +23,7 @@ enum RunbookPrivacy {
 enum SessionStatus {
   ACTIVE
   EXPIRED
+  TERMINATED
 }
 
 enum ExecutionStatus {
