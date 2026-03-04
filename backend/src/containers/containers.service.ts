@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { RuntimeRegistryService } from './runtime-registry.service';
 import Docker from 'dockerode';
 import { PassThrough } from 'stream';
@@ -15,25 +19,43 @@ export class ContainersService {
     private readonly configService: ConfigService,
   ) {}
 
+  private handleDockerError(
+    error: unknown,
+    containerId: string,
+    action: string,
+  ): never {
+    const status = (error as any)?.statusCode;
+
+    if (status === 404) {
+      throw new NotFoundException(`Container with ID ${containerId} not found`);
+    }
+
+    throw new InternalServerErrorException(
+      (error as any)?.message ||
+        `Failed to ${action} container with ID ${containerId}`,
+    );
+  }
+
   async createContainer(): Promise<string> {
     try {
       const container = await this.docker.createContainer({
         Image: this.configService.get<string>('CONTAINER_IMAGE'),
         Cmd: ['sleep', 'infinity'],
-        Tty: true,
         OpenStdin: true,
         HostConfig: {
           NanoCpus: 1_000_000_000, // 1 CPU
           Memory: 512 * 1024 * 1024,
-          NetworkMode: 'none',
+          NetworkMode: 'bridge',
         },
       });
 
       await container.start();
       return container.id;
     } catch (error: unknown) {
-      console.error('Error creating container:', error);
-      throw error;
+      console.log('Error creating container: ', error);
+      throw new InternalServerErrorException(
+        (error as any)?.message ?? 'Failed to create container',
+      );
     }
   }
 
@@ -90,27 +112,35 @@ export class ContainersService {
       );
     } catch (error) {
       console.error('Error executing command in container: ', error);
-      throw error;
+      this.handleDockerError(error, containerId, 'execute command in');
     }
   }
 
-  async stop(containerId: string) {
-    const container = this.docker.getContainer(containerId.toString());
+  async stop(containerId: string): Promise<void> {
+    const container = this.docker.getContainer(containerId);
+
     try {
       await container.stop();
     } catch (error: unknown) {
       console.error('Error stopping container: ', error);
-      throw error;
+
+      if ((error as any)?.statusCode === 304) {
+        console.log(`Container with ID ${containerId} is already stopped`);
+        return;
+      }
+
+      this.handleDockerError(error, containerId, 'stop');
     }
   }
 
   async remove(containerId: string) {
     const container = this.docker.getContainer(containerId);
+
     try {
       await container.remove({ force: true });
     } catch (error: unknown) {
       console.error('Error removing container: ', error);
-      throw error;
+      this.handleDockerError(error, containerId, 'remove');
     }
   }
 }
