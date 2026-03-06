@@ -11,11 +11,11 @@ export class SessionsService {
     private readonly containersService: ContainersService,
   ) {}
 
-  async getActiveSessions(
+  async getActiveSession(
     userId: number,
     runbookId: number,
-  ): Promise<Session[]> {
-    return this.prismaService.session.findMany({
+  ): Promise<Session | null> {
+    return this.prismaService.session.findFirst({
       where: {
         status: SessionStatus.ACTIVE,
         lastActivityAt: {

@@ -19,10 +19,10 @@ export class SessionsController {
   }
 
   @Get('active/:userId/:runbookId')
-  async getActiveSessions(
+  async getActiveSession(
     @Param('userId') userId: number,
     @Param('runbookId') runbookId: number,
   ) {
-    return this.sessionsService.getActiveSessions(userId, runbookId);
+    return this.sessionsService.getActiveSession(userId, runbookId);
   }
 }
