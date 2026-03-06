@@ -31,7 +31,10 @@ async function main() {
   console.log('Created user: ', user);
 
   const runbooks = await prisma.runbook.createManyAndReturn({
-    data: runbooksData,
+    data: runbooksData.map((rb) => ({
+      ...rb,
+      userId: user.id,
+    })),
   });
 
   console.log('Created runbooks: ', runbooks);

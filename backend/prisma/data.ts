@@ -1,12 +1,12 @@
-import { RunbookPrivacy } from '@prisma/client';
-import { RunbookUncheckedCreateInput } from 'src/generated/prisma/models';
+import { RunbookPrivacy } from 'src/generated/prisma/enums';
+import { RunbookUncheckedCreateInput } from 'src/generated/prisma/models/Runbook';
 
 export const userData = {
   email: 'marleybob@gmail.com',
   username: 'bobmarley',
 };
 
-export const runbooksData: RunbookUncheckedCreateInput[] = [
+export const runbooksData: Omit<RunbookUncheckedCreateInput, 'userId'>[] = [
   {
     title: 'Django Setup Guide',
     runtime: 'python:3.11-slim',
@@ -46,7 +46,6 @@ python manage.py runserver 0.0.0.0:8000
 Your Django app is now running!`,
     privacy: RunbookPrivacy.PRIVATE,
     shareToken: 'laksj234jq0dasf',
-    userId: 1,
   },
 
   {
@@ -54,15 +53,14 @@ Your Django app is now running!`,
     runtime: 'node:20-alpine',
     content: ` # Node.js Quick Start
 
-Get started with Node.js in minutes.
+  Get started with Node.js in minutes.
 
-## Check Node Version
+  ## Check Node Version
 
-\`\`\`bash runnable
-node --version
-\`\`\``,
+  \`\`\`bash runnable
+  node --version
+  \`\`\``,
     privacy: RunbookPrivacy.PRIVATE,
     shareToken: 'avasdklagb231bl',
-    userId: 1,
   },
 ];
