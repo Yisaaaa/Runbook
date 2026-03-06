@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { ContainersService } from './containers.service';
-import { CreateContainerDto } from './dto/create-container.dto';
 
 @Controller('containers')
 export class ContainersController {
