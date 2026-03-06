@@ -11,6 +11,22 @@ export class SessionsService {
     private readonly containersService: ContainersService,
   ) {}
 
+  async getOrCreateSession(
+    userId: number,
+    runbookId: number,
+  ): Promise<{ session: Session; isNew: boolean }> {
+    const activeSession = await this.getActiveSession(userId, runbookId);
+
+    if (!activeSession) {
+      return {
+        session: await this.createSession({ userId, runbookId }),
+        isNew: true,
+      };
+    }
+
+    return { session: activeSession, isNew: false };
+  }
+
   async getActiveSession(
     userId: number,
     runbookId: number,
