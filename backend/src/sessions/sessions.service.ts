@@ -67,6 +67,7 @@ export class SessionsService {
     }
 
     await this.containersService.stop(session.containerId);
+    await this.containersService.remove(session.containerId);
     await this.prismaService.session.update({
       where: { id: sessionId },
       data: { status: SessionStatus.TERMINATED },
