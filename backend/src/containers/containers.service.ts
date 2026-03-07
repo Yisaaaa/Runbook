@@ -143,4 +143,21 @@ export class ContainersService {
       this.handleDockerError(error, containerId, 'remove');
     }
   }
+
+  async isContainerAlive(containerId: string): Promise<boolean> {
+    const container = this.docker.getContainer(containerId);
+
+    try {
+      const inspect = await container.inspect();
+      return inspect.State.Running;
+    } catch (error: unknown) {
+      // we do this because handleDockerError will throw 404 if container is not found
+      if ((error as any)?.statusCode === 404) {
+        console.log(`Container with ID ${containerId} not found`);
+        return false;
+      }
+
+      this.handleDockerError(error, containerId, 'check if alive');
+    }
+  }
 }
