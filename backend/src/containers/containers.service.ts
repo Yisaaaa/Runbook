@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { RuntimeRegistryService } from './runtime-registry.service';
 import Docker from 'dockerode';
 import { PassThrough } from 'stream';
 import { ConfigService } from '@nestjs/config';
@@ -14,10 +13,7 @@ export class ContainersService {
 
   private readonly docker = new Docker();
 
-  constructor(
-    private readonly runtimeRegistryService: RuntimeRegistryService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   private handleDockerError(
     error: unknown,
@@ -44,7 +40,7 @@ export class ContainersService {
         OpenStdin: true,
         HostConfig: {
           NanoCpus: 1_000_000_000, // 1 CPU
-          Memory: 512 * 1024 * 1024,
+          Memory: 512 * 1024 * 1024, // 512MB
           NetworkMode: 'bridge',
         },
       });
@@ -59,60 +55,46 @@ export class ContainersService {
     }
   }
 
-  async exec(
+  async *exec(
     containerId: string,
     command: string[],
     timeoutMs: number,
-  ): Promise<any> {
+  ): AsyncGenerator<string> {
     const container = this.docker.getContainer(containerId);
-    let stdout = '';
-    let stderr = '';
+
+    const exec = await container.exec({
+      Cmd: command,
+      AttachStdout: true,
+      AttachStderr: true,
+    });
+
+    const stream = await exec.start({ hijack: true, stdin: false });
+    const combinedStream = new PassThrough();
+    container.modem.demuxStream(stream, combinedStream, combinedStream);
+
+    const timeout = setTimeout(() => {
+      combinedStream.destroy(
+        new Error(`Execution timed out after ${timeoutMs}ms`),
+      );
+    }, timeoutMs);
 
     try {
-      const exec = await container.exec({
-        Cmd: command,
-        AttachStdout: true,
-        AttachStderr: true,
-      });
-      const stream = await exec.start({ hijack: true, stdin: false });
+      for await (const chunk of combinedStream) {
+        yield JSON.stringify({ type: 'output', data: chunk.toString() });
+      }
 
-      return new Promise<{ stdout: string; stderr: string; exitCode: number }>(
-        (resolve, reject) => {
-          const timeout = setTimeout(() => {
-            stream.destroy();
-            reject(
-              new Error(`Command execution timed out after ${timeoutMs}ms`),
-            );
-          }, timeoutMs);
-
-          const stdoutStream = new PassThrough();
-          const stderrStream = new PassThrough();
-
-          stdoutStream.on('data', (chunk) => (stdout += chunk.toString()));
-          stderrStream.on('data', (chunk) => (stderr += chunk.toString()));
-
-          container.modem.demuxStream(stream, stdoutStream, stderrStream);
-
-          stream.on('end', async () => {
-            clearTimeout(timeout);
-            const inspect = await exec.inspect();
-            console.log('inspect: ', inspect);
-            resolve({
-              stdout: stdout.trim(),
-              stderr: stderr.trim(),
-              exitCode: inspect.ExitCode ?? -1,
-            });
-          });
-
-          stream.on('error', (err) => {
-            clearTimeout(timeout);
-            reject(err);
-          });
-        },
-      );
+      const inspect = await exec.inspect();
+      yield JSON.stringify({ type: 'exit', exitCode: inspect.ExitCode ?? -1 });
     } catch (error) {
-      console.error('Error executing command in container: ', error);
-      this.handleDockerError(error, containerId, 'execute command in');
+      yield JSON.stringify({
+        type: 'error',
+        exitCode: -1,
+        message: (error as any)?.message ?? 'An unknown error occured',
+      });
+
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
   }
 

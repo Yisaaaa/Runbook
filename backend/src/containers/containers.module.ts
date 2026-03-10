@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ContainersService } from './containers.service';
-import { RuntimeRegistryService } from './runtime-registry.service';
+import { RuntimeConfigService } from './runtime-config.service';
 import { ContainersController } from './containers.controller';
 
 @Module({
   controllers: [ContainersController],
-  providers: [ContainersService, RuntimeRegistryService],
-  exports: [ContainersService],
+  providers: [ContainersService, RuntimeConfigService],
+  exports: [ContainersService, RuntimeConfigService],
   imports: [],
 })
 export class ContainersModule {}
