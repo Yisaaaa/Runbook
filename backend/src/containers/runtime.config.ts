@@ -1,5 +1,4 @@
 export interface RuntimeConfig {
-  image: string;
-  memoryMb: number;
+  command: string[];
   timeoutMs: number;
 }
