@@ -7,7 +7,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 @Module({
   controllers: [RunbooksController],
   providers: [RunbooksService],
-  exports: [],
+  exports: [RunbooksService],
   imports: [PrismaModule],
 })
 export class RunbooksModule {}

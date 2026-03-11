@@ -104,8 +104,11 @@ export class RunbooksService {
           .slice(runnableBlockStart, line)
           .join('\n');
 
-        runnableBlock.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
-        runnableBlocks.push({ code: runnableBlock, index: currentIndex });
+        const cleaned = runnableBlock
+          .replace(/\r\n/g, '\n')
+          .replace(/\s+$/, '')
+          .trim();
+        runnableBlocks.push({ code: cleaned, index: currentIndex });
         runnableBlockStart = -1;
         currentIndex++;
       }
