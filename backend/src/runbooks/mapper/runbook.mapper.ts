@@ -12,7 +12,6 @@ export function toRunbookResponseDto(
     id: runbook.id,
     title: runbook.title,
     content: runbook.content,
-    runtime: runbook.runtime,
     privacy: runbook.privacy,
     createdAt: runbook.createdAt,
     userId: runbook.userId,
