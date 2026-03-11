@@ -11,27 +11,33 @@ export class SessionsService {
     private readonly containersService: ContainersService,
   ) {}
 
-  async getOrCreateSession(
-    userId: number,
-    runbookId: number,
-  ): Promise<{ session: Session; isNew: boolean }> {
+  async connectToSession(userId: number, runbookId: number): Promise<Session> {
+    // will get an active session or create a new one
     const activeSession = await this.getActiveSession(userId, runbookId);
 
-    if (!activeSession) {
-      return {
-        session: await this.createSession({ userId, runbookId }),
-        isNew: true,
-      };
+    if (activeSession) {
+      const isContainerAlive = await this.containersService.isContainerAlive(
+        activeSession.containerId,
+      );
+      if (!isContainerAlive) {
+        // mark EXPIRED and fall back through createSession
+        await this.prismaService.session.update({
+          where: { id: activeSession.id },
+          data: { status: SessionStatus.EXPIRED },
+        });
+      } else {
+        return activeSession;
+      }
     }
 
-    return { session: activeSession, isNew: false };
+    return await this.createSession({ userId, runbookId });
   }
 
   async getActiveSession(
     userId: number,
     runbookId: number,
   ): Promise<Session | null> {
-    return this.prismaService.session.findFirst({
+    const activeSession = await this.prismaService.session.findFirst({
       where: {
         status: SessionStatus.ACTIVE,
         lastActivityAt: {
@@ -41,6 +47,7 @@ export class SessionsService {
         runbookId,
       },
     });
+    return activeSession;
   }
 
   async createSession(data: CreateSessionDto): Promise<Session> {
@@ -53,6 +60,8 @@ export class SessionsService {
         containerId,
       },
     });
+
+    // Handle file block seeding here.
 
     return session;
   }
@@ -90,12 +99,22 @@ export class SessionsService {
       'Expiring sessions: ',
       expiredSessions.map((s) => s.id),
     );
-    for (const session of expiredSessions) {
-      await this.containersService.stop(session.containerId);
-      await this.prismaService.session.update({
-        where: { id: session.id },
-        data: { status: SessionStatus.EXPIRED },
-      });
+
+    const results = await Promise.allSettled(
+      expiredSessions.map(async (session) => {
+        await this.containersService.stop(session.containerId);
+        await this.containersService.remove(session.containerId);
+        await this.prismaService.session.update({
+          where: { id: session.id },
+          data: { status: SessionStatus.EXPIRED },
+        });
+      }),
+    );
+
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.error('Failed to expire session: ', result.reason);
+      }
     }
   }
 
