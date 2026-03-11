@@ -6,6 +6,9 @@ import {
 import Docker from 'dockerode';
 import { PassThrough } from 'stream';
 import { ConfigService } from '@nestjs/config';
+import { Runtime } from 'src/common/enums/runtime.enum';
+import { RuntimeConfigService } from './runtime-config.service';
+import * as tar from 'tar-stream';
 
 @Injectable()
 export class ContainersService {
@@ -13,7 +16,10 @@ export class ContainersService {
 
   private readonly docker = new Docker();
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly runtimeConfigService: RuntimeConfigService,
+  ) {}
 
   private handleDockerError(
     error: unknown,
@@ -78,6 +84,10 @@ export class ContainersService {
       );
     }, timeoutMs);
 
+    stream.on('end', () => {
+      combinedStream.end();
+    });
+
     try {
       for await (const chunk of combinedStream) {
         yield JSON.stringify({ type: 'output', data: chunk.toString() });
@@ -141,5 +151,30 @@ export class ContainersService {
 
       this.handleDockerError(error, containerId, 'check if alive');
     }
+  }
+
+  async putCodeToFile(
+    runtime: Runtime,
+    codeBlock: string,
+    blockIndex: number,
+    containerId: string,
+  ) {
+    const container = this.docker.getContainer(containerId);
+    const runtimeConfig = this.runtimeConfigService.getConfig(runtime);
+    let filename = `block_${blockIndex}${runtimeConfig.extension}`;
+    const pack = tar.pack();
+    pack.entry({ name: filename }, codeBlock, (err) => {
+      if (err) throw err;
+      pack.finalize();
+    });
+
+    try {
+      await container.putArchive(pack, { path: '/tmp' });
+    } catch (error: unknown) {
+      console.error('Error putting code to file: ', error);
+      this.handleDockerError(error, containerId, 'put code to file');
+    }
+
+    return `/tmp/${filename}`;
   }
 }

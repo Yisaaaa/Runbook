@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Res } from '@nestjs/common';
 import { ContainersService } from './containers.service';
+import { Runtime } from 'src/common/enums/runtime.enum';
+import type { Response } from 'express';
 
 @Controller('containers')
 export class ContainersController {
@@ -30,5 +32,48 @@ export class ContainersController {
     console.log('Executing command in container with ID: ', id);
     console.log('Command: ', data.command, 'Timeout (ms): ', data.timeoutMs);
     return this.containersService.exec(id, data.command, data.timeoutMs);
+  }
+
+  @Post('putCodeToFile/:id')
+  async putCodeToFile(
+    @Param('id') id: string,
+    @Body()
+    data: {
+      runtime: Runtime;
+      codeBlock: string;
+      blockIndex: number;
+    },
+  ) {
+    console.log('Putting code to file in container with ID: ', id);
+    return await this.containersService.putCodeToFile(
+      data.runtime,
+      data.codeBlock,
+      data.blockIndex,
+      id,
+    );
+  }
+
+  @Post('stream-exec')
+  async streamExec(
+    @Body() data: { containerId: string; command: string[]; timeoutMs: number },
+    @Res() res: Response,
+  ) {
+    console.log(
+      'Streaming execution of command in container with ID: ',
+      data.containerId,
+    );
+    res.setHeader('Content-Type', 'text/plain');
+
+    const generator = this.containersService.exec(
+      data.containerId,
+      data.command,
+      data.timeoutMs,
+    );
+
+    for await (const chunk of generator) {
+      res.write(chunk);
+    }
+
+    res.end();
   }
 }

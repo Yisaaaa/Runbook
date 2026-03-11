@@ -5,10 +5,16 @@ import { RuntimeConfig } from './runtime.config';
 @Injectable()
 export class RuntimeConfigService {
   private readonly registry = new Map<Runtime, RuntimeConfig>([
-    [Runtime.PYTHON, { command: ['python3'], timeoutMs: 30000 }],
-    [Runtime.NODE, { command: ['node'], timeoutMs: 30000 }],
-    [Runtime.GOLANG, { command: ['go', 'run'], timeoutMs: 30000 }],
-    [Runtime.BASH, { command: ['bash'], timeoutMs: 15000 }],
+    [
+      Runtime.PYTHON,
+      { command: ['python3', '-u'], timeoutMs: 30000, extension: '.py' },
+    ],
+    [Runtime.NODE, { command: ['node'], timeoutMs: 30000, extension: '.js' }],
+    [
+      Runtime.GOLANG,
+      { command: ['go', 'run'], timeoutMs: 30000, extension: '.go' },
+    ],
+    [Runtime.BASH, { command: ['bash'], timeoutMs: 15000, extension: '.sh' }],
   ]);
 
   getConfig(runtime: Runtime): RuntimeConfig {

@@ -29,12 +29,14 @@
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/adapter-pg": "^7.0.1",
     "@prisma/client": "7.0.1",
+    "@types/tar-stream": "^3.1.4",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "dockerode": "^4.0.9",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "tar-stream": "^3.1.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
