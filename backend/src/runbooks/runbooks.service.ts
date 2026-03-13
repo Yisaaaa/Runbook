@@ -6,6 +6,7 @@ import { toRunbookResponseDto } from './mapper/runbook.mapper';
 import { CreateRunbookDto } from './dto/create-runbook.dto';
 import { RunbookWithUser } from './mapper/runbook.mapper';
 import { RunbookUncheckedCreateInput } from 'src/generated/prisma/models';
+import { Runtime } from 'src/common/enums/runtime.enum';
 
 @Injectable()
 export class RunbooksService {
@@ -21,10 +22,6 @@ export class RunbooksService {
       privacy: createRunbookDto.privacy,
       userId,
     };
-
-    if (createRunbookDto.runtime !== undefined) {
-      data.runtime = createRunbookDto.runtime;
-    }
 
     if (createRunbookDto.shareToken !== undefined) {
       data.shareToken = createRunbookDto.shareToken;
@@ -113,9 +110,53 @@ export class RunbooksService {
         currentIndex++;
       }
     }
-
     console.log(runnableBlocks);
-
     return runnableBlocks;
+  }
+
+  async getRunbookFileBlocks(id: number) {
+    const runbook = await this.prismaService.runbook.findUnique({
+      where: { id },
+      select: { content: true },
+    });
+
+    if (!runbook) {
+      throw new NotFoundException('Runbook not found');
+    }
+
+    const fileBlocks: { runtime: Runtime; filename: string; code: string }[] =
+      [];
+    const contentLines = runbook.content.split('\n');
+    let fileBlockStart = -1;
+    let currentFileBlockIndex = 0;
+    let runtime = '';
+    let filename = '';
+
+    for (let line = 0; line < contentLines.length; line++) {
+      const contentLine = contentLines[line];
+
+      if (contentLine.startsWith('```file')) {
+        runtime = contentLine.split(' ')[1];
+        filename = contentLine.split(' ')[2];
+        fileBlockStart = line + 1;
+      } else if (fileBlockStart !== -1 && contentLine.startsWith('```')) {
+        const fileBlock = contentLines.slice(fileBlockStart, line).join('\n');
+        const cleaned = fileBlock
+          .replace(/\r\n/g, '\n')
+          .replace(/\s+$/, '')
+          .trim();
+
+        fileBlocks.push({
+          runtime: runtime as Runtime,
+          filename,
+          code: cleaned,
+        });
+
+        fileBlockStart = -1;
+        currentFileBlockIndex++;
+      }
+    }
+
+    return fileBlocks;
   }
 }

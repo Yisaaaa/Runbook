@@ -45,6 +45,11 @@ export class RunbooksController {
     return this.runbooksService.getRunbookRunnableBlocks(id);
   }
 
+  @Get(':id/file-blocks')
+  getRunbookFileBlocks(@Param('id') id: number) {
+    return this.runbooksService.getRunbookFileBlocks(id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateRunbookDto: UpdateRunbookDto) {
     return this.runbooksService.update(+id, updateRunbookDto);
