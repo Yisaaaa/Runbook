@@ -3,12 +3,14 @@ import { ContainersService } from 'src/containers/containers.service';
 import { Session, SessionStatus } from 'src/generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { RunbooksService } from 'src/runbooks/runbooks.service';
 
 @Injectable()
 export class SessionsService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly containersService: ContainersService,
+    private readonly runbooksService: RunbooksService,
   ) {}
 
   async connectToSession(userId: number, runbookId: number): Promise<Session> {
@@ -53,17 +55,36 @@ export class SessionsService {
   async createSession(data: CreateSessionDto): Promise<Session> {
     const containerId: string = await this.containersService.createContainer();
 
-    const session = await this.prismaService.session.create({
-      data: {
-        userId: data.userId,
-        runbookId: data.runbookId,
-        containerId,
-      },
-    });
+    try {
+      // Seed fileblocks
+      const fileBlocks = await this.runbooksService.getRunbookFileBlocks(
+        data.runbookId,
+      );
 
-    // Handle file block seeding here.
+      await Promise.all(
+        fileBlocks.map(async (fileBlock) => {
+          await this.containersService.putCodeToFile(
+            fileBlock.code,
+            containerId,
+            fileBlock.filename,
+          );
+        }),
+      );
 
-    return session;
+      const session = await this.prismaService.session.create({
+        data: {
+          userId: data.userId,
+          runbookId: data.runbookId,
+          containerId,
+        },
+      });
+
+      return session;
+    } catch (error) {
+      console.error('Error creating session: ', error);
+      this.containersService.remove(containerId);
+      throw error;
+    }
   }
 
   async endSession(sessionId: number): Promise<void> {

@@ -25,4 +25,12 @@ export class SessionsController {
   ) {
     return this.sessionsService.getActiveSession(userId, runbookId);
   }
+
+  @Get('connect/:userId/:runbookId')
+  async connectToSession(
+    @Param('userId') userId: number,
+    @Param('runbookId') runbookId: number,
+  ) {
+    return this.sessionsService.connectToSession(userId, runbookId);
+  }
 }
