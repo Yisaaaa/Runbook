@@ -39,16 +39,15 @@ export class ContainersController {
     @Param('id') id: string,
     @Body()
     data: {
-      runtime: Runtime;
       codeBlock: string;
       blockIndex: number;
+      filename: string;
     },
   ) {
     console.log('Putting code to file in container with ID: ', id);
     return await this.containersService.putCodeToFile(
-      data.runtime,
       data.codeBlock,
-      data.blockIndex,
+      data.filename,
       id,
     );
   }

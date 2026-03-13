@@ -154,14 +154,11 @@ export class ContainersService {
   }
 
   async putCodeToFile(
-    runtime: Runtime,
     codeBlock: string,
-    blockIndex: number,
     containerId: string,
+    filename: string,
   ) {
     const container = this.docker.getContainer(containerId);
-    const runtimeConfig = this.runtimeConfigService.getConfig(runtime);
-    let filename = `block_${blockIndex}${runtimeConfig.extension}`;
     const pack = tar.pack();
     pack.entry({ name: filename }, codeBlock, (err) => {
       if (err) throw err;
