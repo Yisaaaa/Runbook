@@ -92,7 +92,6 @@ export class ContainersService {
       for await (const chunk of combinedStream) {
         yield JSON.stringify({ type: 'output', data: chunk.toString() });
       }
-
       const inspect = await exec.inspect();
       yield JSON.stringify({ type: 'exit', exitCode: inspect.ExitCode ?? -1 });
     } catch (error) {

@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RunbooksModule } from './runbooks/runbooks.module';
 import { ContainersModule } from './containers/containers.module';
 import { SessionsModule } from './sessions/sessions.module';
+import { ExecutionsModule } from './executions/executions.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SessionsModule } from './sessions/sessions.module';
     RunbooksModule,
     ContainersModule,
     SessionsModule,
+    ExecutionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
