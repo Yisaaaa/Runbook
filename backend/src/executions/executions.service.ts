@@ -40,14 +40,14 @@ export class ExecutionsService {
       );
     }
 
+    const runtimeConfig = this.runtimeConfigService.getConfig(runtime);
     const filepath = await this.containersService.putCodeToFile(
       codeBlock.code,
       session.containerId,
-      'code_block_' + blockIndex + this.runtimeConfigService.getConfig(runtime),
+      'code_block_' + blockIndex + runtimeConfig.extension,
     );
 
     // Get proper command based on filename and runtime
-    const runtimeConfig = this.runtimeConfigService.getConfig(runtime);
     const command = [...runtimeConfig.command, filepath];
 
     try {
