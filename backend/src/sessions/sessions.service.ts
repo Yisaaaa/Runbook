@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { GoneException, Injectable } from '@nestjs/common';
 import { ContainersService } from 'src/containers/containers.service';
 import { Session, SessionStatus } from 'src/generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -50,6 +50,25 @@ export class SessionsService {
       },
     });
     return activeSession;
+  }
+
+  async getSessionById(sessionId: number): Promise<Session | null> {
+    const session = await this.prismaService.session.findUnique({
+      where: { id: sessionId, status: SessionStatus.ACTIVE },
+    });
+
+    if (!session) return null;
+
+    const containerAlive = await this.containersService.isContainerAlive(
+      session.containerId,
+    );
+
+    if (!containerAlive)
+      throw new GoneException(
+        'Session container is no longer alive. Please reconnect',
+      );
+
+    return session;
   }
 
   async createSession(data: CreateSessionDto): Promise<Session> {
