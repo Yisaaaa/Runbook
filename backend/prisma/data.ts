@@ -43,8 +43,6 @@ print(f"Sorted: {arr}")
 ## Using Helper Functions
 
 \`\`\`runnable python
-import sys
-sys.path.insert(0, '/tmp')
 from utils import is_sorted, generate_random
 
 arr = generate_random(10)
