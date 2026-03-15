@@ -2,6 +2,7 @@
 
 import DashboardEmpty from "@/components/dashboard-empty";
 import DashboardSkeleton from "@/components/dashboard-skeleton";
+import NavBar from "@/components/navbar";
 import RunbookCard from "@/components/runbook-card";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,37 +34,40 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-18">
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-3xl mb-2">My runbooks</h1>
-          <p className="text-muted-foreground">
-            Manage and execute your runbooks
-          </p>
+    <>
+      <NavBar />
+      <div className="max-w-3xl mx-auto mt-18">
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h1 className="text-3xl mb-2">My runbooks</h1>
+            <p className="text-muted-foreground">
+              Manage and execute your runbooks
+            </p>
+          </div>
+
+          <Button variant={"secondary"} className="flex gap-2" asChild>
+            <Link href={`/dashboard/runbooks/new`} className="flex gap-2">
+              <Plus />
+              <span>New Runbook</span>
+            </Link>
+          </Button>
         </div>
 
-        <Button variant={"secondary"} className="flex gap-2" asChild>
-          <Link href={`/dashboard/runbooks/new`} className="flex gap-2">
-            <Plus />
-            <span>New Runbook</span>
-          </Link>
-        </Button>
-      </div>
+        <InputGroup className="py-6 mb-8">
+          <InputGroupInput placeholder="Search runbooks..." />
+          <InputGroupAddon>
+            <Search className="w-4 h-4" />
+          </InputGroupAddon>
+        </InputGroup>
 
-      <InputGroup className="py-6 mb-8">
-        <InputGroupInput placeholder="Search runbooks..." />
-        <InputGroupAddon>
-          <Search className="w-4 h-4" />
-        </InputGroupAddon>
-      </InputGroup>
-
-      <div>
-        {isLoading ? (
-          <DashboardSkeleton count={4} />
-        ) : (
-          cards || <DashboardEmpty />
-        )}
+        <div>
+          {isLoading ? (
+            <DashboardSkeleton count={4} />
+          ) : (
+            cards || <DashboardEmpty />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

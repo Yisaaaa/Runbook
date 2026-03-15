@@ -113,11 +113,11 @@ export default function RunbookPage() {
   }, [data, params.id]);
 
   return (
-    <div className="max-w-5xl mx-auto mt-4 mb-10">
+    <div className="max-w-7xl mx-auto mt-4">
       <Button
         onClick={handleBackToDashboard}
         variant="link"
-        className="flex text-muted-foreground mb-9 items-center justify-start"
+        className="flex text-muted-foreground mb-1 items-center justify-start"
       >
         <ArrowLeft className="w-5 h-5" />
         <span>Back to dashboard</span>
