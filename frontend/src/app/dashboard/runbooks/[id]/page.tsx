@@ -175,21 +175,6 @@ export default function RunbookPage() {
               Preview
             </button>
           </div>
-
-          <Select value={runtime} onValueChange={setRuntime}>
-            <SelectTrigger className="w-38">
-              <SelectValue placeholder="Select runtime" />
-            </SelectTrigger>
-            <SelectContent className="z-50">
-              <SelectGroup>
-                <SelectLabel>Runtimes</SelectLabel>
-                <SelectItem value="python">Python</SelectItem>
-                <SelectItem value="nodejs">Node.js</SelectItem>
-                <SelectItem value="golang">Go</SelectItem>
-                <SelectItem value="bash">Bash (Ubuntu)</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
         </div>
         <div className="">
           {isEditMode ? (

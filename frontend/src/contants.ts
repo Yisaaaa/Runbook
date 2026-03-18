@@ -1,6 +1,6 @@
 export const runtimeLanguageMap: Record<string, string> = {
   python: "python",
-  nodejs: "javascript",
+  node: "javascript",
   golang: "golang",
   bash: "bash",
 };

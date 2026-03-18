@@ -1,6 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import RunnableCodeBlock from "./runnable-code-block";
 import { useRunnableBlockQuery } from "@/queries/runbook";
+import FileCodeBlock from "./file-code-block";
 
 type RunbookPreviewType = {
   runbookId: number | null;
@@ -34,8 +35,9 @@ export default function RunbookPreviewPage({
             const child = Array.isArray(children) ? children[0] : children;
 
             if (
-              typeof child.props?.className === "string" &&
-              child.props.className.includes("runnable")
+              (typeof child.props?.className === "string" &&
+                child.props.className.includes("runnable")) ||
+              child.props.className.includes("file")
             ) {
               return <>{children}</>;
             }
@@ -52,13 +54,26 @@ export default function RunbookPreviewPage({
               (block) => block.code == code,
             )?.index;
 
-            const isRunnable = className?.includes("runnable");
-            if (isRunnable) {
+            const meta = node?.data?.meta?.split(" ");
+            const runtime = meta?.[0];
+            const filename = meta?.[1];
+
+            if (className?.includes("runnable")) {
               return (
                 <RunnableCodeBlock
                   runtime={runtime ?? ""}
                   code={code}
-                  index={index ?? null}
+                  index={index}
+                />
+              );
+            }
+
+            if (className?.includes("file")) {
+              return (
+                <FileCodeBlock
+                  runtime={runtime}
+                  filename={filename}
+                  code={code}
                 />
               );
             }
