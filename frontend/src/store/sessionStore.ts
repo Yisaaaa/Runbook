@@ -12,7 +12,9 @@ export const useSessionStore = create<SessionState>((set) => ({
   sessionId: null,
   isConnecting: false,
 
-  setSession: (sessionId: number) => set({ sessionId }),
+  setSession: (sessionId: number) => {
+    set({ sessionId });
+  },
 
   clearSession: () => set({ sessionId: null }),
 
