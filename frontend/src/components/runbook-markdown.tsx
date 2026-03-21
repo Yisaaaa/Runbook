@@ -4,15 +4,24 @@ import RunnableCodeBlock from "./runnable-code-block";
 import FileCodeBlock from "./file-code-block";
 
 export default function RunbookMarkdown({
+  sessionId,
   runbookId,
   content,
   className,
 }: {
-  runbookId: number | null;
+  sessionId: number;
+  runbookId: number;
   content: string;
   className?: string;
 }) {
-  const { data: runnableBlocks } = useRunnableBlockQuery(runbookId);
+  const {
+    data: runnableBlocks,
+    isLoading,
+    isError,
+    error,
+  } = useRunnableBlockQuery(runbookId);
+
+  if (!runnableBlocks) return null;
 
   console.log(runnableBlocks);
   return (
@@ -39,18 +48,23 @@ export default function RunbookMarkdown({
                 .replace(/\r\n/g, "\n")
                 .replace(/\s+$/, "")
                 .trim();
-              const index = runnableBlocks?.find(
-                (block) => block.code == code,
-              )?.index;
+              const block = runnableBlocks.find((block) => block.code == code);
+
+              if (!block) return null;
+
+              const index = block.index;
 
               const meta = node?.data?.meta?.split(" ");
               const runtime = meta?.[0];
               const filename = meta?.[1];
 
+              if (!runtime) return null;
+
               if (className?.includes("runnable")) {
                 return (
                   <RunnableCodeBlock
-                    runtime={runtime ?? ""}
+                    sessionId={sessionId}
+                    runtime={runtime}
                     code={code}
                     index={index}
                   />
@@ -58,6 +72,8 @@ export default function RunbookMarkdown({
               }
 
               if (className?.includes("file")) {
+                if (!filename) return null;
+
                 return (
                   <FileCodeBlock
                     runtime={runtime}

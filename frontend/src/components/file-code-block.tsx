@@ -3,8 +3,8 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { runtimeLanguageMap } from "@/contants";
 
 type FileCodeBlock = {
-  runtime: string | undefined;
-  filename: string | undefined;
+  runtime: string;
+  filename: string;
   code: string;
 };
 

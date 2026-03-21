@@ -16,8 +16,8 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { fetchWrapper } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import RunbookPreviewPage from "@/components/runbook-preview";
 import RunbookMarkdown from "@/components/runbook-markdown";
+import { useEffect } from "react";
 
 export default function RunbookViewPage() {
   const params = useParams();
@@ -37,6 +37,12 @@ export default function RunbookViewPage() {
     console.log("Failed to load runbook: ", error);
     router.replace("/dashboard/runbooks");
   }
+
+  useEffect(() => {
+    if (runbookId !== sessionStore.runbookId) {
+      sessionStore.clearSession();
+    }
+  }, [sessionStore.runbookId]);
 
   const connectSessionUi = () => {
     if (sessionStore.sessionId) {
@@ -81,7 +87,7 @@ export default function RunbookViewPage() {
         { method: "POST" },
       );
       console.log("connection res: ", res);
-      sessionStore.setSession(res.id);
+      sessionStore.setSession(res.id, res.runbookId);
     } catch (error) {
       console.error("error connecting to session: ", error);
       toast.error("Failed to connect to session");
@@ -126,7 +132,11 @@ export default function RunbookViewPage() {
           <Separator />
         </div>
 
-        <RunbookMarkdown content={data?.content ?? ""} runbookId={runbookId} />
+        <RunbookMarkdown
+          content={data?.content ?? ""}
+          runbookId={runbookId}
+          sessionId={sessionStore.sessionId}
+        />
       </div>
     </div>
   );
