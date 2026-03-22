@@ -4,6 +4,9 @@
 
 Runbook is a polyglot notebook platform — write Markdown, embed runnable code blocks, and execute them in isolated Docker containers directly from the browser. Think Jupyter, but multi-runtime and built from scratch.
 
+
+![demo-ezgif com-optimize](https://github.com/user-attachments/assets/c878b87f-a3b2-49c6-b74c-3aa6d5dcbc53)
+
 ---
 
 ## Features
