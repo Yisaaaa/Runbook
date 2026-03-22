@@ -6,7 +6,7 @@ import { useState } from "react";
 import { join } from "node:path";
 
 type RunnableCodeBlock = {
-  sessionId: number;
+  sessionId: number | null;
   runtime: string;
   code: string;
   index: number;

@@ -9,21 +9,15 @@ export default function RunbookMarkdown({
   content,
   className,
 }: {
-  sessionId: number;
+  sessionId: number | null;
   runbookId: number;
   content: string;
   className?: string;
 }) {
-  const {
-    data: runnableBlocks,
-    isLoading,
-    isError,
-    error,
-  } = useRunnableBlockQuery(runbookId);
+  const { data: runnableBlocks } = useRunnableBlockQuery(runbookId);
 
   if (!runnableBlocks) return null;
 
-  console.log(runnableBlocks);
   return (
     <div className={`h-full min-h-0 flex flex-col ${className}`}>
       <div className="min-h-0 prose prose-invert max-w-none">
@@ -48,28 +42,12 @@ export default function RunbookMarkdown({
                 .replace(/\r\n/g, "\n")
                 .replace(/\s+$/, "")
                 .trim();
-              const block = runnableBlocks.find((block) => block.code == code);
-
-              if (!block) return null;
-
-              const index = block.index;
 
               const meta = node?.data?.meta?.split(" ");
               const runtime = meta?.[0];
               const filename = meta?.[1];
 
               if (!runtime) return null;
-
-              if (className?.includes("runnable")) {
-                return (
-                  <RunnableCodeBlock
-                    sessionId={sessionId}
-                    runtime={runtime}
-                    code={code}
-                    index={index}
-                  />
-                );
-              }
 
               if (className?.includes("file")) {
                 if (!filename) return null;
@@ -79,6 +57,23 @@ export default function RunbookMarkdown({
                     runtime={runtime}
                     filename={filename}
                     code={code}
+                  />
+                );
+              }
+
+              const block = runnableBlocks.find((block) => block.code == code);
+
+              if (!block) return null;
+
+              const index = block.index;
+
+              if (className?.includes("runnable")) {
+                return (
+                  <RunnableCodeBlock
+                    sessionId={sessionId}
+                    runtime={runtime}
+                    code={code}
+                    index={index}
                   />
                 );
               }
