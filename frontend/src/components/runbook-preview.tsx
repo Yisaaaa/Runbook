@@ -3,7 +3,7 @@ import RunbookMarkdown from "./runbook-markdown";
 type RunbookPreviewType = {
   className?: string;
   content: string;
-  runbookId: number;
+  runbookId: number | null;
 };
 
 export default function RunbookPreviewPage({

@@ -10,7 +10,7 @@ export default function RunbookMarkdown({
   className,
 }: {
   sessionId: number | null;
-  runbookId: number;
+  runbookId: number | null;
   content: string;
   className?: string;
 }) {
