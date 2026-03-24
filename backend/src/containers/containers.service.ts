@@ -48,6 +48,7 @@ export class ContainersService {
           NanoCpus: 1_000_000_000, // 1 CPU
           Memory: 512 * 1024 * 1024, // 512MB
           NetworkMode: 'bridge',
+          PidsLimit: 100, // Fork bomb prevention
         },
       });
 
