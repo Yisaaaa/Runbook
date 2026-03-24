@@ -46,6 +46,7 @@ One Docker container per user per runbook session. Containers run a single image
 NanoCpus: 1 core
 Memory:   512MB (swap disabled)
 Network:  bridge (outbound only)
+PidsLimit: 100
 ```
 
 ### Block types
