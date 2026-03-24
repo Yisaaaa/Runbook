@@ -1,6 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CurrentUser } from 'src/auth/user.decorator';
+import type { JwtPayload } from 'src/auth/auth.types';
 
 @Controller('sessions')
 export class SessionsController {
@@ -26,11 +37,12 @@ export class SessionsController {
     return this.sessionsService.getActiveSession(userId, runbookId);
   }
 
-  @Post('connect/:userId/:runbookId')
+  @UseGuards(AuthGuard)
+  @Post('connect/:runbookId')
   async connectToSession(
-    @Param('userId') userId: number,
     @Param('runbookId') runbookId: number,
+    @CurrentUser() user: JwtPayload,
   ) {
-    return this.sessionsService.connectToSession(userId, runbookId);
+    return this.sessionsService.connectToSession(user.sub, runbookId);
   }
 }
