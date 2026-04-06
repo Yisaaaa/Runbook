@@ -82,10 +82,9 @@ export default function RunbookViewPage() {
   const handleConnectSession = async () => {
     sessionStore.setConnecting(true);
     try {
-      const res = await fetchWrapper(
-        `/sessions/connect/${userId}/${runbookId}`,
-        { method: "POST" },
-      );
+      const res = await fetchWrapper(`/sessions/connect/${runbookId}`, {
+        method: "POST",
+      });
       console.log("connection res: ", res);
       sessionStore.setSession(res.id, res.runbookId);
     } catch (error) {
